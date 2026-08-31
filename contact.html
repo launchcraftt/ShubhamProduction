@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Shubham Production</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="img/favicon.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+
+<body>
+
+  <header class="site-header" id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo h-logo"><img src="img/logo-white.png" alt="Shubham Production"></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">Home</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link">Services <i class="chev">▾</i></a>
+          <div class="dropdown-menu">
+            <a href="pre-wedding.html">Pre-Wedding Photography</a>
+            <a href="wedding.html">Wedding Photography</a>
+          </div>
+        </div>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link  active">Contact</a>
+      </nav>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="page-hero-content">
+      <p class="eyebrow">Let's Talk</p>
+      <h1>Contact Us</h1>
+      <p>Planned your wedding date? Send us the details below and we'll get back with a tailored, cost-effective
+        estimate within a day.</p>
+      <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span>Contact Us</div>
+    </div>
+  </section>
+
+  <section class="about" id="contactEnquire">
+    <div class="section-inner">
+
+      <div class="contact-cards">
+        <div class="contact-card reveal">
+          <div class="contact-card-icon">⌂</div>
+          <h3>Visit the Studio</h3>
+          <p>Sector 31,Shubham Production,<br>Faridabad, Haryana 121003</p>
+        </div>
+        <div class="contact-card reveal reveal-delay-1">
+          <div class="contact-card-icon">☎</div>
+          <h3>Call Us</h3>
+          <p>+91 88023 89087<br>Mon – Sat, 10am – 7pm</p>
+        </div>
+        <div class="contact-card reveal reveal-delay-2">
+          <div class="contact-card-icon">✉</div>
+          <h3>Email Us</h3>
+          <p>Shubhamproduction01@gmail.com<br>We reply within 24 hours</p>
+        </div>
+      </div>
+
+      <div class="contact-grid" style="background:var(--panel); border-radius:var(--radius); padding:56px;">
+        <div class="contact-info reveal">
+          <p class="eyebrow" style="color:var(--green-dark);">Book Now</p>
+          <h2 style="color:var(--black);">Tell Us About<br>Your Big Day</h2>
+          <p style="color:var(--ink-soft);">Fill in the form and our team will follow up with a package recommendation
+            and pricing that fits your date and city.</p>
+          <ul class="contact-details" style="margin-top:36px;">
+            <li style="border-left-color:var(--green);"><strong style="color:var(--green-dark);">Response
+                Time</strong><span style="color:var(--black);">Within 24 hours</span></li>
+            <li style="border-left-color:var(--green);"><strong style="color:var(--green-dark);">Photo
+                Delivery</strong><span style="color:var(--black);">15 days</span></li>
+            <li style="border-left-color:var(--green);"><strong style="color:var(--green-dark);">Film
+                Delivery</strong><span style="color:var(--black);">30 days</span></li>
+          </ul>
+        </div>
+
+        <!-- <form class="contact-form reveal reveal-delay-1" id="bookingForm">
+          <div class="form-row">
+            <div class="form-field">
+              <label for="fname">Name</label>
+              <input type="text" id="fname" name="name" required placeholder="Your full name">
+            </div>
+            <div class="form-field">
+              <label for="fphone">Phone Number</label>
+              <input type="tel" id="fphone" name="phone" required placeholder="+91 ">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="femail">Email</label>
+              <input type="email" id="femail" name="email" required placeholder="you@example.com">
+            </div>
+            <div class="form-field">
+              <label for="fdate">Date of Event</label>
+              <input type="date" id="fdate" name="date">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label for="ftype">Type of Event</label>
+            <select id="ftype" name="type">
+              <option>Wedding Photography</option>
+              <option>Haldi &amp; Mehndi Photography</option>
+              <option>Engagement Photography</option>
+              <option>Pre-Wedding Photography</option>
+              <option>Event Photoshoot</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="fbudget">Approximate Budget <span id="budgetValue">₹1,50,000</span></label>
+            <input type="range" id="fbudget" name="budget" min="50000" max="600000" step="25000" value="100000">
+          </div>
+
+          <button type="submit" class="btn btn-gold form-submit">Send Enquiry</button>
+          <p class="form-note" id="formNote"></p>
+        </form> -->
+        <form class="contact-form reveal reveal-delay-1" id="bookingForm">
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="fname">Name</label>
+              <input type="text" id="fname" name="name" required placeholder="Your full name">
+            </div>
+
+            <div class="form-field">
+              <label for="fphone">Phone Number</label>
+              <input type="tel" id="fphone" name="phone" required placeholder="+91 ">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label for="femail">Email</label>
+              <input type="email" id="femail" name="email" required placeholder="you@example.com">
+            </div>
+
+            <div class="form-field">
+              <label for="fdate">Date of Event</label>
+              <input type="date" id="fdate" name="date">
+            </div>
+          </div>
+
+          <!-- Main Event -->
+          <div class="form-field">
+            <label for="ftype">Type of Event</label>
+            <select id="ftype" name="type">
+              <option value="">Select Event Type</option>
+              <option>Wedding Photography</option>
+              <option>Haldi &amp; Mehndi Photography</option>
+              <option>Engagement Photography</option>
+              <option>Pre-Wedding Photography</option>
+              <option>Event Photoshoot</option>
+              <option>Birthday Photography</option>
+              <option>Maternity Photography</option>
+              <option>Baby / Newborn Photography</option>
+              <option>Other Event</option>
+            </select>
+          </div>
+
+          <!-- Add More Event -->
+          <button type="button" class="add-event-btn" id="addEventBtn">
+            + Add More Event
+          </button>
+
+          <!-- Added Events -->
+          <div id="addedEvents" class="added-events"></div>
+
+          <!-- Hidden field containing all additional events -->
+          <input type="hidden" name="additional_events" id="additionalEventsInput">
+
+          <div class="form-field">
+            <label for="fbudget">
+              Approximate Budget
+              <span id="budgetValue">₹1,50,000</span>
+            </label>
+
+            <input type="range" id="fbudget" name="budget" min="50000" max="600000" step="25000" value="100000">
+          </div>
+
+          <button type="submit" class="btn btn-gold form-submit">
+            Send Enquiry
+          </button>
+
+          <p class="form-note" id="formNote"></p>
+
+        </form>
+
+
+        <!-- ================= EVENT POPUP ================= -->
+
+        <div class="event-modal" id="eventModal">
+
+          <div class="event-modal-box">
+
+            <button type="button" class="event-modal-close" id="closeEventModal">
+              &times;
+            </button>
+
+            <h3>Add Another Event</h3>
+
+            <p class="event-modal-subtitle">
+              Add details for your additional event.
+            </p>
+
+            <div class="form-field">
+              <label for="extraEventDate">Date of Event</label>
+              <input type="date" id="extraEventDate">
+            </div>
+
+            <div class="form-field">
+              <label for="extraEventLocation">Location</label>
+              <input type="text" id="extraEventLocation" placeholder="Event location">
+            </div>
+
+            <div class="form-field">
+              <label for="extraEventType">Type of Event</label>
+
+              <select id="extraEventType">
+                <option value="">Select Event Type</option>
+                <option>Wedding Photography</option>
+                <option>Haldi &amp; Mehndi Photography</option>
+                <option>Engagement Photography</option>
+                <option>Pre-Wedding Photography</option>
+                <option>Event Photoshoot</option>
+                <option>Birthday Photography</option>
+                <option>Maternity Photography</option>
+                <option>Baby / Newborn Photography</option>
+                <option>Other Event</option>
+              </select>
+            </div>
+
+            <button type="button" class="btn btn-gold" id="saveEventBtn">
+              Add Event
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <div class="map-placeholder reveal">
+
+        <div class="map-address">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Sector 31, Faridabad, Haryana 121003</span>
+        </div>
+
+        <iframe src="https://www.google.com/maps?q=28.4537407,77.3186899&output=embed" width="100%" height="400"
+          style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="section-inner footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo f-logo"><img src="img/logo.png""
+          alt=" Shubham Production"></a>
+        <p>Wedding photography &amp; films crafted with a quiet, watchful eye — capturing the beginning of your story
+          since 2018.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="wedding.html">Wedding Photography</a>
+        <a href="pre-wedding.html">Pre-Wedding</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Destinations</h4>
+        <a href="portfolio.html">Jaipur</a>
+        <a href="portfolio.html">Goa</a>
+        <a href="portfolio.html">Rishikesh</a>
+        <a href="portfolio.html">Dehradun</a>
+        <a href="portfolio.html">Agra</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="contact.html">Sector 31, Faridabad, Haryana 121003</a>
+        <a href="tel:+918802389087">+91 88023 89087</a>
+        <a href="mailto:Shubhamproduction01@gmail.com">Shubhamproduction01@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span>Shubham Production. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/918802389087" target="_blank" class="whatsapp-fab" aria-label="Contact us"><i
+      class="fa-brands fa-square-whatsapp"></i></a>
+  <a href="https://www.instagram.com/shubhamproduction_/" target="_blank" class="instagram-fab"
+    aria-label="Contact us"><i class="fa-brands fa-square-instagram"></i></a>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="script.js"></script>
+  <script src="contact.js"></script>
+</body>
+
+</html>

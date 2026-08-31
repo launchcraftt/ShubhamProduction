@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shubham Production | Wedding Photography &amp; Films</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="icon" href="img/favicon.png">
+</head>
+
+<body>
+
+  <header class="site-header" id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo h-logo"><img src="img/logo-white.png" alt="Shubham Production"></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link active">Home</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link">Services <i class="chev">▾</i></a>
+          <div class="dropdown-menu">
+            <a href="pre-wedding.html">Pre-Wedding Photography</a>
+            <a href="wedding.html">Wedding Photography</a>
+          </div>
+        </div>
+        <a href="portfolio.html" class="nav-link">Portfolio</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      <a href="contact.html" class="btn btn-outline header-cta">Book Now</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= HERO (rotating Ken Burns slideshow) ================= -->
+  <section class="hero" id="home">
+    <div class="hero-slideshow" id="heroSlideshow">
+      <div class="hero-slide active"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+      <div class="hero-slide"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="eyebrow">Since 2018 · Delhi NCR</p>
+      <h1>Every Vow Deserves<br>a <em>Beautiful</em> Frame</h1>
+      <p class="hero-sub">Candid, cinematic wedding photography &amp; films crafted with a quiet, watchful eye — so your
+        day feels remembered, not staged.</p>
+      <div class="hero-actions">
+        <a href="portfolio.html" class="btn btn-gold">View Portfolio</a>
+        <a href="contact.html" class="btn btn-ghost">Get a Quote</a>
+      </div>
+    </div>
+    <div class="hero-dots" id="heroDots"></div>
+    <div class="hero-scroll">Scroll <span>↓</span></div>
+  </section>
+
+  <!-- ================= ABOUT / FEATURES ================= -->
+  <section class="about" id="about">
+    <div class="section-inner about-grid">
+      <div class="about-copy reveal">
+        <p class="eyebrow">About the Studio</p>
+        <h2>Nearly Three Decades of<br>Honest Storytelling</h2>
+        <p>What began as a single photographer with one camera in 2018 has grown into a full in-house team of
+          photographers, cinematographers and editors. Across 500+ weddings, our approach hasn't changed: stay close,
+          stay quiet, and let the day tell its own story.</p>
+        <a href="about.html" class="btn btn-outline" style="margin-top:32px;">Our Story</a>
+      </div>
+      <div class="about-features">
+        <div class="feature reveal">
+          <span class="feature-num">01</span>
+          <h3>In-House Team</h3>
+          <p>Every photographer, editor and cinematographer works under one roof — no outsourcing, no surprises on the
+            day.</p>
+        </div>
+        <div class="feature reveal reveal-delay-1">
+          <span class="feature-num">02</span>
+          <h3>Candid-First Style</h3>
+          <p>We shoot moments as they happen. Posed portraits are the exception on our shot list, not the rule.</p>
+        </div>
+        <div class="feature reveal reveal-delay-2">
+          <span class="feature-num">03</span>
+          <h3>15-Day Delivery</h3>
+          <p>Edited photo galleries in 15 days, full wedding films in 30 — clear timelines, every time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= PORTFOLIO ================= -->
+  <section class="portfolio" id="portfolio">
+    <div class="section-inner">
+      <p class="eyebrow center reveal">Real Weddings</p>
+      <h2 class="center reveal">Recent Stories We've Framed</h2>
+
+      <div class="portfolio-grid" id="portfolioGrid"></div>
+
+      <div class="portfolio-cta">
+        <a href="portfolio.html#pfStickyBar" class="btn btn-outline">View All Weddings</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FAQ ================= -->
+  <section class="faq" id="faq">
+    <div class="section-inner faq-grid">
+      <div class="faq-heading reveal">
+        <p class="eyebrow">Good to Know</p>
+        <h2>Frequently Asked<br>Questions</h2>
+        <p class="faq-sub">Can't find your answer here? Send us a message and we'll get back within a day.</p>
+        <a href="contact.html" class="btn btn-gold" style="margin-top:28px;">Ask a Question</a>
+      </div>
+
+      <div class="faq-list" id="faqList">
+        <div class="faq-item">
+          <button class="faq-question">
+            What is included in your wedding photography packages?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Our packages can include candid photography, traditional photography, cinematic films, pre-wedding
+              shoots, and more. We tailor each package around your wedding events, requirements, and budget.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">When will we receive our photos and films?<span
+              class="faq-icon">+</span></button>
+          <div class="faq-answer">
+            <p>Edited photo galleries are delivered within 15 days of the event, and full wedding films within 30 days.
+              A short teaser reel is usually ready within 72 hours.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">Do you travel for destination weddings?<span class="faq-icon">+</span></button>
+          <div class="faq-answer">
+            <p>Yes — we travel across India to capture your special day. Travel, stay and logistics are planned upfront
+              and included in one transparent package quote.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question">What does a typical package cost?<span class="faq-icon">+</span></button>
+          <div class="faq-answer">
+            <p>Our one-day wedding photography package starts at <strong>₹50,000</strong>. Pricing may vary depending on
+              coverage hours, team size and deliverables. Use the contact form and we'll send you a tailored estimate
+              for your wedding.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CTA BANNER ================= -->
+  <section class="cta-banner">
+    <div class="section-inner" style="padding:0;">
+      <p class="eyebrow center">Let's Talk</p>
+      <h2>Planning a Wedding This Year?</h2>
+      <p>Reach out for a cost-effective, no-obligation estimate tailored to your date and city.</p>
+      <a href="contact.html" class="btn btn-gold">Book Your Date</a>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="section-inner footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><img src="img/logo.png" style="width: 150px; height: 70px;"
+            alt="Shubham Production"></a>
+        <p>Wedding photography &amp; films crafted with a quiet, watchful eye — capturing the beginning of your story
+          since 2018.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="wedding.html">Wedding Photography</a>
+        <a href="pre-wedding.html">Pre-Wedding</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Destinations</h4>
+        <a href="portfolio.html">Jaipur</a>
+        <a href="portfolio.html">Goa</a>
+        <a href="portfolio.html">Rishikesh</a>
+        <a href="portfolio.html">Dehradun</a>
+        <a href="portfolio.html">Agra</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="contact.html">Sector 31, Faridabad, Haryana 121003</a>
+        <a href="tel:+918802389087">+91 88023 89087</a>
+        <a href="mailto:Shubhamproduction01@gmail.com">Shubhamproduction01@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span>Shubham Production. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/918802389087" target="_blank" class="whatsapp-fab" aria-label="Contact us"><i
+      class="fa-brands fa-square-whatsapp"></i></a>
+  <a href="https://www.instagram.com/shubhamproduction_/" target="_blank" class="instagram-fab"
+    aria-label="Contact us"><i class="fa-brands fa-square-instagram"></i></a>
+
+  <script src="script.js"></script>
+</body>
+
+</html>

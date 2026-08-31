@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio | Shubham Production</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="portfolio.css">
+  <link rel="icon" href="img/favicon.png">
+</head>
+
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="header">
+    <div class="header-inner">
+      <a href="index.html" class="logo f-logo"><img src="img/logo-white.png" alt="Shubham Production"></a>
+      <nav class="main-nav" id="mainNav">
+        <a href="index.html" class="nav-link">Home</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link">Services <i class="chev">▾</i></a>
+          <div class="dropdown-menu">
+            <a href="pre-wedding.html">Pre-Wedding Photography</a>
+            <a href="wedding.html">Wedding Photography</a>
+          </div>
+        </div>
+        <a href="portfolio.html" class="nav-link active">Portfolio</a>
+        <a href="about.html" class="nav-link">About Us</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+      </nav>
+      <a href="contact.html" class="btn btn-outline header-cta">Book Now</a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== PAGE HERO ===== -->
+  <section class="page-hero">
+    <div class="page-hero-content">
+      <p class="eyebrow">Our Work</p>
+      <h1>Portfolio</h1>
+      <p>Browse our collection of wedding photography, pre-wedding shoots, cinematic reels, and destination stories —
+        each one as unique as the couple behind it.</p>
+      <div class="breadcrumb"><a href="index.html">Home</a><span class="sep">/</span>Portfolio</div>
+    </div>
+  </section>
+
+  <!-- ===== STICKY FILTER BAR ===== -->
+  <div class="pf-sticky-bar" id="pfStickyBar">
+    <div class="pf-sticky-inner">
+
+      <!-- Search -->
+      <div class="pf-search-wrap">
+        <svg class="pf-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+        <input type="text" id="pfSearch" class="pf-search-input" placeholder="Search by tag, location, style…"
+          autocomplete="off">
+        <button class="pf-search-clear" id="pfSearchClear" aria-label="Clear search">✕</button>
+      </div>
+
+      <!-- Media type toggle -->
+      <div class="pf-media-tabs" id="pfMediaTabs">
+        <button class="pf-mtab active" data-media="photos">📷 Photos</button>
+        <button class="pf-mtab" data-media="reel">🎬 Reel</button>
+        <button class="pf-mtab" data-media="teaser">🎞️ Teaser</button>
+        <button class="pf-mtab" data-media="cinematic">🎥 Cinematic</button>
+      </div>
+
+      <!-- Tag filters (photos) -->
+      <div class="pf-filter-row" id="pfPhotoFilters">
+        <div class="pf-filter-group">
+          <span class="pf-group-label">Wedding</span>
+          <button class="pf-tag active" data-tag="all">All</button>
+          <button class="pf-tag" data-tag="bridal">Bridal</button>
+          <button class="pf-tag" data-tag="groom">Groom</button>
+          <button class="pf-tag" data-tag="couple">Couple</button>
+          <button class="pf-tag" data-tag="haldi">Haldi</button>
+          <button class="pf-tag" data-tag="mehndi">Mehndi</button>
+          <button class="pf-tag" data-tag="engagement">Engagement</button>
+          <button class="pf-tag" data-tag="family">Family</button>
+        </div>
+        <div class="pf-divider"></div>
+        <div class="pf-filter-group">
+          <span class="pf-group-label">Pre-Wedding</span>
+          <button class="pf-tag" data-tag="prewedding">All Pre-Wed</button>
+          <button class="pf-tag" data-tag="jaipur">Jaipur</button>
+          <button class="pf-tag" data-tag="delhi">Delhi</button>
+          <button class="pf-tag" data-tag="rishikesh">Rishikesh</button>
+          <button class="pf-tag" data-tag="agra">Agra</button>
+        </div>
+      </div>
+
+      <!-- Tag filters (reel / teaser / cinematic) — Album ke liye ye row kabhi nahi dikhti -->
+      <div class="pf-filter-row" id="pfVideoFilters" style="display:none;">
+        <div class="pf-filter-group">
+          <button class="pf-tag active" data-vtag="all">All</button>
+          <button class="pf-tag" data-vtag="wedding">Wedding</button>
+          <button class="pf-tag" data-vtag="prewedding">Pre-Wedding</button>
+        </div>
+      </div>
+
+      <!-- Results count -->
+      <div class="pf-results-bar">
+        <span id="pfResultCount">Loading…</span>
+        <button class="pf-clear-all" id="pfClearAll">Clear filters</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN GALLERY ===== -->
+  <main class="pf-main" id="pfMain">
+    <div class="pf-gallery-wrap" id="pfGalleryWrap">
+
+      <!-- PHOTOS SECTION -->
+      <section class="pf-section" id="pfPhotosSection">
+        <div class="pf-grid" id="pfGrid">
+          <!-- Cards injected by portfolio.js -->
+        </div>
+        <div class="pf-load-more-wrap">
+          <button class="pf-load-more" id="pfLoadMore">Load More Photos</button>
+        </div>
+      </section>
+
+      <!-- VIDEOS SECTION (Reel / Teaser / Cinematic) -->
+      <section class="pf-section" id="pfVideosSection" style="display:none;">
+        <div class="pf-video-grid" id="pfVideoGrid">
+          <!-- Video cards injected by portfolio.js -->
+        </div>
+
+        <!-- Sirf REEL tab ke liye Load More button. portfolio.js isse
+             khud show/hide karta hai — sirf Reel active hone par
+             dikhega, Teaser/Cinematic me hidden hi rahega. -->
+        <div class="pf-load-more-wrap" id="pfVideoLoadMoreWrap" style="display:none;">
+          <button class="pf-load-more" id="pfVideoLoadMore">Load More Reels</button>
+        </div>
+      </section>
+      <section class="pf-section" id="pfAlbumSection" style="display:none;">
+
+        <!-- Album cover cards — photos section jaisa hi CSS (.pf-grid/.pf-card reuse) -->
+        <div class="pf-grid" id="pfAlbumCovers">
+          <!-- Album covers injected by portfolio.js -->
+        </div>
+
+        <!-- Ek album khulne par uske andar ki photos yahan dikhti hain -->
+        <div class="pf-album-detail" id="pfAlbumDetail" style="display:none;">
+          <button class="pf-album-back" id="pfAlbumBack">‹ Back to Albums</button>
+          <h3 class="pf-album-detail-title" id="pfAlbumDetailTitle"></h3>
+          <div class="pf-album-grid" id="pfAlbumGrid">
+            <!-- Album photos injected by portfolio.js -->
+          </div>
+        </div>
+
+      </section>
+
+      <!-- EMPTY STATE -->
+      <div class="pf-empty" id="pfEmpty" style="display:none;">
+        <div class="pf-empty-icon">🔍</div>
+        <h3>No results found</h3>
+        <p>Try a different keyword or clear your filters.</p>
+        <button class="btn btn-outline" id="pfEmptyReset">Clear All Filters</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== QUERY BOX ===== -->
+  <section class="pf-query-section">
+    <div class="pf-query-inner">
+      <div class="pf-query-text">
+        <p class="eyebrow">Custom Samples</p>
+        <h2>Can't find what you're looking for?</h2>
+        <p>Tell us exactly the style, location, mood, or story you have in mind — we'll share matching samples from our
+          full archive personally.</p>
+      </div>
+      <form class="pf-query-form" id="pfQueryForm">
+        <textarea class="pf-query-textarea" id="pfQueryInput" rows="3"
+          placeholder="e.g. 'Candid bridal shots in soft morning light at a heritage venue' or 'Drone shots from a Goa beach pre-wedding'…"></textarea>
+        <div class="pf-query-row">
+          <input type="text" class="pf-query-field" id="pfQueryName" placeholder="Your name">
+          <input type="tel" class="pf-query-field" id="pfQueryPhone" placeholder="Phone / WhatsApp">
+          <button type="submit" class="btn btn-gold">Request Samples</button>
+        </div>
+        <p class="pf-query-note" id="pfQueryNote"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="section-inner footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="logo"><img src="img/logo.png" style="width: 150px; height: 70px;"
+            alt="Shubham Production"></a>
+        <p>Wedding photography &amp; films crafted with a quiet, watchful eye — capturing the beginning of your story
+          since 2018.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Explore</h4>
+        <a href="index.html">Home</a>
+        <a href="about.html">About Us</a>
+        <a href="wedding.html">Wedding Photography</a>
+        <a href="pre-wedding.html">Pre-Wedding</a>
+        <a href="portfolio.html">Portfolio</a>
+        <a href="contact.html">Contact Us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Destinations</h4>
+        <a href="portfolio.html">Jaipur</a>
+        <a href="portfolio.html">Goa</a>
+        <a href="portfolio.html">Rishikesh</a>
+        <a href="portfolio.html">Dehradun</a>
+        <a href="portfolio.html">Agra</a>
+      </div>
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="contact.html">Sector 31, Faridabad, Haryana 121003</a>
+        <a href="tel:+918802389087">+91 88023 89087</a>
+        <a href="mailto:Shubhamproduction01@gmail.com">Shubhamproduction01@gmail.com</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year"></span>Shubham Production. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+  <!-- ===== LIGHTBOX ===== -->
+  <div class="pf-lightbox" id="pfLightbox" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="pf-lb-close" id="pfLbClose" aria-label="Close">✕</button>
+    <button class="pf-lb-arrow pf-lb-prev" id="pfLbPrev" aria-label="Previous photo">‹</button>
+    <button class="pf-lb-arrow pf-lb-next" id="pfLbNext" aria-label="Next photo">›</button>
+    <div class="pf-lb-stage" id="pfLbStage">
+      <div class="pf-lb-img-wrap" id="pfLbImgWrap">
+        <!-- image injected by JS -->
+      </div>
+      <div class="pf-lb-meta" id="pfLbMeta"></div>
+    </div>
+    <div class="pf-lb-thumbs" id="pfLbThumbs"></div>
+    <div class="pf-lb-counter" id="pfLbCounter"></div>
+  </div>
+
+  <a href="contact.html" class="whatsapp-fab" aria-label="Contact us">✆</a>
+
+  <script src="script.js"></script>
+  <script src="portfolio.js"></script>
+</body>
+
+</html>
