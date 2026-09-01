@@ -1,4 +1,3 @@
-
 /* =========================================================
    PORTFOLIO JS — portfolio.js
    ========================================================= */
@@ -44,7 +43,7 @@
     prewedding: 'Pre-Wedding',
     destination: 'Destination'
   };
-
+  
 
   /* ============================================================
      1. IMages Path Here
@@ -57,36 +56,36 @@
        ========================================================== */
 
     bridal: [
-      "img/portfolio/bridal/1.jpg",
-      "img/portfolio/bridal/2.jpg",
-      "img/portfolio/bridal/3.jpg",
-      "img/portfolio/bridal/4.jpg",
-      "img/portfolio/bridal/5.jpg",
-      "img/portfolio/bridal/6.jpg",
-      "img/portfolio/bridal/7.jpg",
-      "img/portfolio/bridal/8.jpg",
-      "img/portfolio/bridal/9.jpg",
-      "img/portfolio/bridal/10.jpg",
-      "img/portfolio/bridal/11.jpg",
-      "img/portfolio/bridal/12.jpg",
-      "img/portfolio/bridal/13.jpg",
-      "img/portfolio/bridal/14.jpg",
-      "img/portfolio/bridal/15.jpg",
-      "img/portfolio/bridal/16.jpg",
-      "img/portfolio/bridal/17.jpg",
-      "img/portfolio/bridal/18.jpg",
-      "img/portfolio/bridal/19.jpg",
-      "img/portfolio/bridal/20.jpg",
-      "img/portfolio/bridal/21.jpg",
-      "img/portfolio/bridal/22.jpg",
-      "img/portfolio/bridal/23.jpg",
-      "img/portfolio/bridal/24.jpg",
-      "img/portfolio/bridal/25.jpg",
-      "img/portfolio/bridal/26.jpg",
-      "img/portfolio/bridal/27.jpg",
-      "img/portfolio/bridal/28.jpg",
-      "img/portfolio/bridal/29.jpg",
-      "img/portfolio/bridal/30.jpg",
+      "img/portfolio/bridal/1.webp",
+      "img/portfolio/bridal/2.webp",
+      "img/portfolio/bridal/3.webp",
+      "img/portfolio/bridal/4.webp",
+      "img/portfolio/bridal/5.webp",
+      "img/portfolio/bridal/6.webp",
+      "img/portfolio/bridal/7.webp",
+      "img/portfolio/bridal/8.webp",
+      "img/portfolio/bridal/9.webp",
+      "img/portfolio/bridal/10.webp",
+      "img/portfolio/bridal/11.webp",
+      "img/portfolio/bridal/12.webp",
+      "img/portfolio/bridal/13.webp",
+      "img/portfolio/bridal/14.webp",
+      "img/portfolio/bridal/15.webp",
+      "img/portfolio/bridal/16.webp",
+      "img/portfolio/bridal/17.webp",
+      "img/portfolio/bridal/18.webp",
+      "img/portfolio/bridal/19.webp",
+      "img/portfolio/bridal/20.webp",
+      "img/portfolio/bridal/21.webp",
+      "img/portfolio/bridal/22.webp",
+      "img/portfolio/bridal/23.webp",
+      "img/portfolio/bridal/24.webp",
+      "img/portfolio/bridal/25.webp",
+      "img/portfolio/bridal/26.webp",
+      "img/portfolio/bridal/27.webp",
+      "img/portfolio/bridal/28.webp",
+      "img/portfolio/bridal/29.webp",
+      "img/portfolio/bridal/30.webp",
 
     ],
 
@@ -581,7 +580,7 @@
 
 
   /* ============================================================
-     🔥🔥🔥 SECTION AL — ALBUM (NAYA, folder-style photo albums) 🔥🔥🔥
+     SECTION AL — ALBUM (folder-style photo albums)
      ============================================================
 
      YAHAN PAR APNE ALBUM "DESIGNS" (folders) DEFINE KARO.
@@ -589,12 +588,12 @@
 
      Har album ke liye:
        tag        → unique internal id (URLs/keys me safe rakho, spaces mat use karo)
-       label      → jo naam card par aur photo-badge me dikhega (🔥 BAS YE BADLO agar
+       label      → jo naam card par aur photo-badge me dikhega (BAS YE BADLO agar
                      sirf naam change karna hai)
        folder     → us album ki photos jis folder me hain
        photoCount → us folder me kitni photos hain (minimum 40, jitni chaho utni badha do)
 
-     ⚠️ PATH: har album folder ke andar photos "1.jpg", "2.jpg" ... is tarah
+     PATH: har album folder ke andar photos "1.jpg", "2.jpg" ... is tarah
      numbered honi chahiye, aur ek "cover.jpg" bhi honi chahiye (card ka thumbnail).
 
      Example:
@@ -603,31 +602,21 @@
        img/portfolio/album/royal/2.jpg
        ... 1 se 40 (ya jitni bhi photoCount di hai) tak
 
-     🔥 NAYA ALBUM ADD KARNA HO to bas neeche list me ek aur
+     NAYA ALBUM ADD KARNA HO to bas neeche list me ek aur
      { tag:..., label:..., folder:..., photoCount:... } add kar do.
      ============================================================ */
 
   var ALBUM_CATS = [
-    // 🎞️ CHANGE ALBUM 1 NAME/FOLDER HERE
-    { tag: 'album-royal',       label: 'Royal Wedding Album',  folder: 'img/portfolio/album/royal',       photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 2 NAME/FOLDER HERE
-    { tag: 'album-destination', label: 'Destination Story',    folder: 'img/portfolio/album/destination', photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 3 NAME/FOLDER HERE
-    { tag: 'album-vintage',     label: 'Vintage Charm',        folder: 'img/portfolio/album/vintage',     photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 4 NAME/FOLDER HERE
-    { tag: 'album-modern',      label: 'Modern Minimal',       folder: 'img/portfolio/album/modern',      photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 5 NAME/FOLDER HERE
-    { tag: 'album-traditional', label: 'Traditional Rasam',    folder: 'img/portfolio/album/traditional', photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 6 NAME/FOLDER HERE
-    { tag: 'album-cinematic',   label: 'Cinematic Moments',    folder: 'img/portfolio/album/cinematic',   photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 7 NAME/FOLDER HERE
-    { tag: 'album-pastel',      label: 'Pastel Dreams',        folder: 'img/portfolio/album/pastel',      photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 8 NAME/FOLDER HERE
-    { tag: 'album-golden',      label: 'Golden Hour',          folder: 'img/portfolio/album/golden',      photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 9 NAME/FOLDER HERE
-    { tag: 'album-heritage',    label: 'Heritage Palace',      folder: 'img/portfolio/album/heritage',    photoCount: 40 },
-    // 🎞️ CHANGE ALBUM 10 NAME/FOLDER HERE
-    { tag: 'album-beach',       label: 'Boho Beach',           folder: 'img/portfolio/album/beach',       photoCount: 40 }
+    { tag: 'album-royal', label: 'Royal Wedding Album', folder: 'img/portfolio/album/royal', photoCount: 40 },
+    { tag: 'album-destination', label: 'Destination Story', folder: 'img/portfolio/album/destination', photoCount: 40 },
+    { tag: 'album-vintage', label: 'Vintage Charm', folder: 'img/portfolio/album/vintage', photoCount: 40 },
+    { tag: 'album-modern', label: 'Modern Minimal', folder: 'img/portfolio/album/modern', photoCount: 40 },
+    { tag: 'album-traditional', label: 'Traditional Rasam', folder: 'img/portfolio/album/traditional', photoCount: 40 },
+    { tag: 'album-cinematic', label: 'Cinematic Moments', folder: 'img/portfolio/album/cinematic', photoCount: 40 },
+    { tag: 'album-pastel', label: 'Pastel Dreams', folder: 'img/portfolio/album/pastel', photoCount: 40 },
+    { tag: 'album-golden', label: 'Golden Hour', folder: 'img/portfolio/album/golden', photoCount: 40 },
+    { tag: 'album-heritage', label: 'Heritage Palace', folder: 'img/portfolio/album/heritage', photoCount: 40 },
+    { tag: 'album-beach', label: 'Boho Beach', folder: 'img/portfolio/album/beach', photoCount: 40 }
   ];
 
   // Album labels ko TAG_LABELS me bhi daal dete hain, taaki jab
@@ -693,7 +682,7 @@
       title: 'Mahi & Manish',
       iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/vv0kmhCrTao?si=PKGCUv0Q19j_hkaR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
     },
-    
+
     {
       media: 'teaser',
       vtag: 'wedding',
@@ -826,7 +815,7 @@
       title: 'Raghudev & Priyanka',
       iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/9qJsSraFkW4?si=nIgLIMoyP9QVXGgh" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
     },
-    
+
     {
       media: 'cinematic',
       vtag: 'prewedding',
@@ -836,22 +825,10 @@
     {
       media: 'cinematic',
       vtag: 'wedding',
-      title: 'Saurabh & Anjali',
-      iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/Lbcryj300eU?si=gZQWkJrosdmMc0Bd" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-    },
-    {
-      media: 'cinematic',
-      vtag: 'prewedding',
-      title: 'Surbhi & Mayank',
-      iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/9ns0vicW9T8?si=tOja-Eoz8sQwiATc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-    },
-    {
-      media: 'cinematic',
-      vtag: 'wedding',
       title: 'Khushi & Zayad',
       iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/BAsWLtn8Suo?si=D_45CN02djoZiTHL" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
     },
-     
+
 
     {
       media: 'cinematic',
@@ -859,7 +836,7 @@
       title: 'Vishal & Gunjan',
       iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/JIEI6kUX-r0?si=_dqibJ_INUI7kuX0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
     },
-    
+
     {
       media: 'cinematic',
       vtag: 'prewedding',
@@ -885,20 +862,18 @@
 
     /* ========== WEDDING REELS ========== */
     wedding: [
-      { kind: 'youtube', src: 'sMyX-D9w67A?si=A8ZqDkxGWCT0mB7c', title: 'Aadhya'},
+      { kind: 'youtube', src: 'sMyX-D9w67A?si=A8ZqDkxGWCT0mB7c', title: 'Aadhya' },
       { kind: 'youtube', src: '9W4yYwmxFI0?si=93hPGU-TJoazJBk5', title: 'Kritika' },
       { kind: 'youtube', src: 'neFZ74WnWYs?si=W7BQYqInaoVGDRSF', title: 'Priya' },
       { kind: 'youtube', src: 'x_iaGyO32Co?si=Q3uZ6XRJTrWyNcna', title: 'Rahul & Sikha' },
       { kind: 'youtube', src: 'Zc2awQiVGYI?si=w3XCXC5en01NqDiY', title: 'Saanvi' },
       { kind: 'youtube', src: 'tO17eJSS-hk?si=CYU2GlmKf-BdhhEJ', title: 'Priya & Vikash' },
-      { kind: 'youtube', src: 'pza9TwH2kcg?si=fhIw2lb8biNVXsGS', title: 'Kiara' },
       { kind: 'youtube', src: 'fUd_2O18IOU?si=UiKlFyGlSYPBseOh', title: 'Diya' },
-      { kind: 'youtube', src: '5c1T54cOYAY?si=DjKehuMVFfbOgFNC', title: 'Avni' },
       { kind: 'youtube', src: 'clq3Tst-oVA?si=VZ2RdClY79-PsexH', title: 'Shubham & Ruhi' },
       { kind: 'youtube', src: 'Y1Fq7JgndAg?si=1IZ68tZWwwko-Xif', title: 'Ananya' },
       { kind: 'youtube', src: 't1_veJatcvI?si=Co8nL01Kzjl_T4oD', title: 'Nandini' },
       { kind: 'youtube', src: 'slwyI0R3Pg4?si=OXxjw8QzhZZJIx4L', title: 'Riya' },
-      { kind: 'youtube', src: '_8NtBrvMWmA?si=oMPxYDiy6jzgz-AqT0mB7c', title: 'Simran' },
+      { kind: 'youtube', src: '_8NtBrvMWmA?si=oMPxYDiy6jzgz-Aq', title: 'Simran' },
       { kind: 'youtube', src: 'qFm0IVwgf3w?si=XzA4lQcQg_qhAtzq', title: 'Saanvi' },
       { kind: 'youtube', src: 'aPw7QvkOm7o?si=7DGUAnTDTG1wgSt6', title: 'Isha' },
       { kind: 'youtube', src: 's5gs2Xbpr5k?si=tgLm2AvQhiAKmnG9', title: 'Sunidhi & Arun' },
@@ -949,20 +924,13 @@
 
 
   var PREWEDDING_CATS = [
-    { tag: 'preWedding',tagName: 'preWedding', count: 53 },
-    { tag: 'jaipur',tagName: 'jaipur',count: 30 },
-    { tag: 'delhi',tagName:'delhi', count: 50 },
-    { tag: 'rishikesh',tagName:'rishikesh', count: 30 },
-    { tag: 'agra',tagName:'agra', count: 30 }
+    { tag: 'preWedding', count: 53 },
+    { tag: 'jaipur', count: 30 },
+    { tag: 'delhi', count: 50 },
+    { tag: 'rishikesh', count: 30 },
+    { tag: 'agra', count: 30 }
   ];
 
-
-  /* Video tabs — Reel / Teaser / Cinematic.*/
-  var VIDEO_CATS = [
-    { media: 'reel', label: 'Reel' },
-    { media: 'teaser', label: 'Teaser' },
-    { media: 'cinematic', label: 'Cinematic' }
-  ];
 
   var REEL_INCREMENT = 12;
 
@@ -1024,43 +992,16 @@
 
       var images = IMAGE_PATHS[cat.tag] || [];
 
-      /*
-       * IMPORTANT:
-       * Jitni actual images array me hongi,
-       * utne hi cards banenge.
-       */
-
       for (var i = 1; i <= images.length; i++) {
 
         out.push({
-
           id: 'w-' + cat.tag + '-' + pad(i),
-
           tag: cat.tag,
-
-          tags: [
-            cat.tag,
-            'wedding'
-          ],
-
-          title:
-          ' ',
-
-          ratio:
-            RATIOS[
-              (i + cat.tag.length) %
-              RATIOS.length
-            ],
-
-          gradient:
-            GRADIENTS[
-              (i + cat.tag.length) %
-              GRADIENTS.length
-            ],
-
-          src:
-            images[i - 1]
-
+          tags: [cat.tag, 'wedding'],
+          title: ' ',
+          ratio: RATIOS[(i + cat.tag.length) % RATIOS.length],
+          gradient: GRADIENTS[(i + cat.tag.length) % GRADIENTS.length],
+          src: images[i - 1]
         });
 
       }
@@ -1075,39 +1016,13 @@
       for (var i = 1; i <= images.length; i++) {
 
         out.push({
-
-          id:
-            'pw-' +
-            cat.tag +
-            '-' +
-            pad(i),
-
-          tag:
-            cat.tag,
-
-          tags: [
-            cat.tag,
-            'prewedding'
-          ],
-
-          title:
-            '',
-
-          ratio:
-            RATIOS[
-              (i + cat.tag.length) %
-              RATIOS.length
-            ],
-
-          gradient:
-            GRADIENTS[
-              (i + cat.tag.length) %
-              GRADIENTS.length
-            ],
-
-          src:
-            images[i - 1]
-
+          id: 'pw-' + cat.tag + '-' + pad(i),
+          tag: cat.tag,
+          tags: [cat.tag, 'prewedding'],
+          title: '',
+          ratio: RATIOS[(i + cat.tag.length) % RATIOS.length],
+          gradient: GRADIENTS[(i + cat.tag.length) % GRADIENTS.length],
+          src: images[i - 1]
         });
 
       }
@@ -1120,7 +1035,7 @@
 
 
   /* ============================================================
-     🔥 NAYA — BUILD ALBUM PHOTO DATA
+     BUILD ALBUM PHOTO DATA
      Ek album (ALBUM_CATS ka ek entry) ke andar ki saari photos
      ko photo-jaisa object bana deta hai, taaki common lightbox
      ke saath compatible ho (src/gradient/ratio/tag/title).
@@ -1157,37 +1072,19 @@
     var fixedVideos = VIDEO_DATA.map(function (video, i) {
 
       return {
-
-        id:
-          'v-' +
-          video.media +
-          '-' +
-          video.vtag +
-          '-' +
-          pad(i + 1),
-
-        media:
-          video.media,
-
-        vtag:
-          video.vtag,
-
-        title:
-          video.title,
-
-        // 🎥 DIRECT IFRAME — no url/path handling needed
-        iframe:
-          video.iframe
-
+        id: 'v-' + video.media + '-' + video.vtag + '-' + pad(i + 1),
+        media: video.media,
+        vtag: video.vtag,
+        title: video.title,
+        iframe: video.iframe
       };
 
     });
 
-    // Reel videos REEL_DATA se generate hote hain
     return fixedVideos.concat(buildReels());
 
   }
-  
+
 
 
   /* ============================================================
@@ -1211,22 +1108,13 @@
         var r = list[i - 1] || {};
 
         out.push({
-
           id: 'v-reel-' + cat + '-' + pad(i),
-
           media: 'reel',
-
           vtag: cat,
-
-          title: r.title || (VTAG_LABELS[cat]+i),
-
-          // Tarika 2: seedha iframe
+          title: r.title || (VTAG_LABELS[cat] + i),
           iframe: r.iframe || null,
-
-          // Tarika 1: path/URL (kind: 'youtube' / 'file' / 'instagram')
           kind: r.kind || null,
           src: r.src || null
-
         });
 
       }
@@ -1273,36 +1161,36 @@
 
 
   var pfGrid,
-      pfVideoGrid,
-      pfLoadMore,
-      pfPhotosSection,
-      pfVideosSection;
+    pfVideoGrid,
+    pfLoadMore,
+    pfPhotosSection,
+    pfVideosSection;
 
   var pfPhotoFilters,
-      pfVideoFilters;
+    pfVideoFilters;
 
   var pfResultCount,
-      pfEmpty,
-      pfClearAll,
-      pfSearchClear;
+    pfEmpty,
+    pfClearAll,
+    pfSearchClear;
 
   var pfLightbox,
-      pfLbImgWrap,
-      pfLbMeta,
-      pfLbCounter,
-      pfLbThumbs;
+    pfLbImgWrap,
+    pfLbMeta,
+    pfLbCounter,
+    pfLbThumbs;
 
   /* Reel ke "Load More" button ke references */
   var pfVideoLoadMoreWrap,
-      pfVideoLoadMore;
+    pfVideoLoadMore;
 
-  /* 🔥 NAYA — Album section ke DOM references */
+  /* Album section ke DOM references */
   var pfAlbumSection,
-      pfAlbumCovers,
-      pfAlbumDetail,
-      pfAlbumDetailTitle,
-      pfAlbumGrid,
-      pfAlbumBack;
+    pfAlbumCovers,
+    pfAlbumDetail,
+    pfAlbumDetailTitle,
+    pfAlbumGrid,
+    pfAlbumBack;
 
 
   /* ============================================================
@@ -1313,115 +1201,47 @@
     'DOMContentLoaded',
     function () {
 
-      pfGrid =
-        document.getElementById('pfGrid');
+      pfGrid = document.getElementById('pfGrid');
+      pfVideoGrid = document.getElementById('pfVideoGrid');
+      pfLoadMore = document.getElementById('pfLoadMore');
+      pfPhotosSection = document.getElementById('pfPhotosSection');
+      pfVideosSection = document.getElementById('pfVideosSection');
+      pfPhotoFilters = document.getElementById('pfPhotoFilters');
+      pfVideoFilters = document.getElementById('pfVideoFilters');
+      pfResultCount = document.getElementById('pfResultCount');
+      pfEmpty = document.getElementById('pfEmpty');
+      pfClearAll = document.getElementById('pfClearAll');
+      pfSearchClear = document.getElementById('pfSearchClear');
+      pfLightbox = document.getElementById('pfLightbox');
+      pfLbImgWrap = document.getElementById('pfLbImgWrap');
+      pfLbMeta = document.getElementById('pfLbMeta');
+      pfLbCounter = document.getElementById('pfLbCounter');
+      pfLbThumbs = document.getElementById('pfLbThumbs');
+      pfVideoLoadMoreWrap = document.getElementById('pfVideoLoadMoreWrap');
+      pfVideoLoadMore = document.getElementById('pfVideoLoadMore');
 
-      pfVideoGrid =
-        document.getElementById('pfVideoGrid');
-
-      pfLoadMore =
-        document.getElementById('pfLoadMore');
-
-      pfPhotosSection =
-        document.getElementById('pfPhotosSection');
-
-      pfVideosSection =
-        document.getElementById('pfVideosSection');
-
-      pfPhotoFilters =
-        document.getElementById('pfPhotoFilters');
-
-      pfVideoFilters =
-        document.getElementById('pfVideoFilters');
-
-      pfResultCount =
-        document.getElementById('pfResultCount');
-
-      pfEmpty =
-        document.getElementById('pfEmpty');
-
-      pfClearAll =
-        document.getElementById('pfClearAll');
-
-      pfSearchClear =
-        document.getElementById('pfSearchClear');
-
-      pfLightbox =
-        document.getElementById('pfLightbox');
-
-      pfLbImgWrap =
-        document.getElementById('pfLbImgWrap');
-
-      pfLbMeta =
-        document.getElementById('pfLbMeta');
-
-      pfLbCounter =
-        document.getElementById('pfLbCounter');
-
-      pfLbThumbs =
-        document.getElementById('pfLbThumbs');
-
-      pfVideoLoadMoreWrap =
-        document.getElementById('pfVideoLoadMoreWrap');
-
-      pfVideoLoadMore =
-        document.getElementById('pfVideoLoadMore');
-
-      //NAYA — Album refs
-      pfAlbumSection =
-        document.getElementById('pfAlbumSection');
-
-      pfAlbumCovers =
-        document.getElementById('pfAlbumCovers');
-
-      pfAlbumDetail =
-        document.getElementById('pfAlbumDetail');
-
-      pfAlbumDetailTitle =
-        document.getElementById('pfAlbumDetailTitle');
-
-      pfAlbumGrid =
-        document.getElementById('pfAlbumGrid');
-
-      pfAlbumBack =
-        document.getElementById('pfAlbumBack');
+      pfAlbumSection = document.getElementById('pfAlbumSection');
+      pfAlbumCovers = document.getElementById('pfAlbumCovers');
+      pfAlbumDetail = document.getElementById('pfAlbumDetail');
+      pfAlbumDetailTitle = document.getElementById('pfAlbumDetailTitle');
+      pfAlbumGrid = document.getElementById('pfAlbumGrid');
+      pfAlbumBack = document.getElementById('pfAlbumBack');
 
 
       bindSearch();
-
       bindMediaTabs();
-
       bindPhotoTags();
-
       bindVideoTags();
-
       bindLoadMore();
-
       bindVideoLoadMore();
-
       bindAlbumBack();
-
       bindLightbox();
-
       bindQueryForm();
-
       bindStickyBar();
 
 
-      document
-        .getElementById('pfClearAll')
-        .addEventListener(
-          'click',
-          clearAllFilters
-        );
-
-
-      document
-        .getElementById('pfEmptyReset')
-        .addEventListener(
-          'click',
-          clearAllFilters
-        );
+      document.getElementById('pfClearAll').addEventListener('click', clearAllFilters);
+      document.getElementById('pfEmptyReset').addEventListener('click', clearAllFilters);
 
 
       applyFilters();
@@ -1436,23 +1256,14 @@
 
   function bindStickyBar() {
 
-    var bar =
-      document.getElementById('pfStickyBar');
-
+    var bar = document.getElementById('pfStickyBar');
 
     window.addEventListener(
       'scroll',
       function () {
-
-        bar.classList.toggle(
-          'elevated',
-          window.scrollY > 80
-        );
-
+        bar.classList.toggle('elevated', window.scrollY > 80);
       },
-      {
-        passive: true
-      }
+      { passive: true }
     );
 
   }
@@ -1464,34 +1275,19 @@
 
   function bindSearch() {
 
-    var input =
-      document.getElementById('pfSearch');
-
+    var input = document.getElementById('pfSearch');
 
     input.addEventListener(
       'input',
       function () {
 
-        searchQuery =
-          this.value
-            .trim()
-            .toLowerCase();
+        searchQuery = this.value.trim().toLowerCase();
 
-
-        pfSearchClear.classList.toggle(
-          'visible',
-          searchQuery.length > 0
-        );
-
+        pfSearchClear.classList.toggle('visible', searchQuery.length > 0);
 
         activeTag = 'all';
 
-
-        resetTagUI(
-          '.pf-tag[data-tag]',
-          'all'
-        );
-
+        resetTagUI('.pf-tag[data-tag]', 'all');
 
         applyFilters();
 
@@ -1499,130 +1295,100 @@
     );
 
 
-    document
-      .getElementById('pfSearchClear')
-      .addEventListener(
-        'click',
-        function () {
+    document.getElementById('pfSearchClear').addEventListener(
+      'click',
+      function () {
 
-          document
-            .getElementById('pfSearch')
-            .value = '';
+        document.getElementById('pfSearch').value = '';
+        searchQuery = '';
+        pfSearchClear.classList.remove('visible');
+        applyFilters();
 
-
-          searchQuery = '';
-
-
-          pfSearchClear.classList.remove(
-            'visible'
-          );
-
-
-          applyFilters();
-
-        }
-      );
+      }
+    );
 
   }
 
 
   /* ============================================================
      11. MEDIA TABS
-      UPDATED — ab 3 tarah ke tabs handle hote hain:
+      3 tarah ke tabs handle hote hain:
        'photos'                     → photo grid
-       'album'                      → NAYA folder-style albums
-       'reel'/'teaser'/'cinematic'  → video grid (jaisa pehle tha)
+       'album'                      → folder-style albums
+       'reel'/'teaser'/'cinematic'  → video grid
      ============================================================ */
 
   function bindMediaTabs() {
 
-    document
-      .querySelectorAll('.pf-mtab')
-      .forEach(
-        function (btn) {
+    document.querySelectorAll('.pf-mtab').forEach(
+      function (btn) {
 
-          btn.addEventListener(
-            'click',
-            function () {
+        btn.addEventListener(
+          'click',
+          function () {
 
-              document
-                .querySelectorAll('.pf-mtab')
-                .forEach(
-                  function (b) {
+            document.querySelectorAll('.pf-mtab').forEach(
+              function (b) { b.classList.remove('active'); }
+            );
 
-                    b.classList.remove(
-                      'active'
-                    );
+            this.classList.add('active');
 
-                  }
-                );
+            activeMedia = this.dataset.media;
 
 
-              this.classList.add(
-                'active'
-              );
+            if (activeMedia === 'photos') {
 
+              pfPhotoFilters.style.display = '';
+              pfVideoFilters.style.display = 'none';
+              pfPhotosSection.style.display = '';
+              pfVideosSection.style.display = 'none';
+              pfAlbumSection.style.display = 'none';
 
-              activeMedia =
-                this.dataset.media;
+              pfVideoGrid.classList.remove('is-reels');
+              pfVideoLoadMoreWrap.style.display = 'none';
 
+              applyFilters();
 
-              if (activeMedia === 'photos') {
+            } else if (activeMedia === 'album') {
 
-                pfPhotoFilters.style.display = '';
-                pfVideoFilters.style.display = 'none';
-                pfPhotosSection.style.display = '';
-                pfVideosSection.style.display = 'none';
-                pfAlbumSection.style.display = 'none'; // 🔥 NAYA
+              pfPhotoFilters.style.display = 'none';
+              pfVideoFilters.style.display = 'none';
+              pfPhotosSection.style.display = 'none';
+              pfVideosSection.style.display = 'none';
+              pfAlbumSection.style.display = '';
 
-                pfVideoGrid.classList.remove('is-reels');
-                pfVideoLoadMoreWrap.style.display = 'none';
+              pfVideoGrid.classList.remove('is-reels');
+              pfVideoLoadMoreWrap.style.display = 'none';
 
-                applyFilters();
+              pfAlbumDetail.style.display = 'none';
+              pfAlbumCovers.style.display = '';
 
-              } else if (activeMedia === 'album') {
+              renderAlbumCovers();
 
-                // 🔥 NAYA — Album: koi filter row nahi, photos/videos section hide
-                pfPhotoFilters.style.display = 'none';
-                pfVideoFilters.style.display = 'none';
-                pfPhotosSection.style.display = 'none';
-                pfVideosSection.style.display = 'none';
-                pfAlbumSection.style.display = '';
+            } else {
 
-                pfVideoGrid.classList.remove('is-reels');
-                pfVideoLoadMoreWrap.style.display = 'none';
+              // reel / teaser / cinematic
+              pfPhotoFilters.style.display = 'none';
+              pfVideoFilters.style.display = '';
+              pfPhotosSection.style.display = 'none';
+              pfVideosSection.style.display = '';
+              pfAlbumSection.style.display = 'none';
 
-                // Tab par click karte hi hamesha cover-grid se shuru
-                pfAlbumDetail.style.display = 'none';
-                pfAlbumCovers.style.display = '';
+              activeVTag = 'all';
 
-                renderAlbumCovers();
+              resetTagUI('.pf-tag[data-vtag]', 'all');
 
-              } else {
-
-                // reel / teaser / cinematic
-                pfPhotoFilters.style.display = 'none';
-                pfVideoFilters.style.display = '';
-                pfPhotosSection.style.display = 'none';
-                pfVideosSection.style.display = '';
-                pfAlbumSection.style.display = 'none'; // 🔥 NAYA
-
-                activeVTag = 'all';
-
-                resetTagUI(
-                  '.pf-tag[data-vtag]',
-                  'all'
-                );
-
-                renderVideos();
-
-              }
+              renderVideos();
 
             }
-          );
 
-        }
-      );
+            scrollToTopOfResults();
+
+          }
+        );
+
+      }
+    );
 
   }
 
@@ -1633,47 +1399,32 @@
 
   function bindPhotoTags() {
 
-    document
-      .querySelectorAll(
-        '.pf-tag[data-tag]'
-      )
-      .forEach(
-        function (btn) {
+    document.querySelectorAll('.pf-tag[data-tag]').forEach(
+      function (btn) {
 
-          btn.addEventListener(
-            'click',
-            function () {
+        btn.addEventListener(
+          'click',
+          function () {
 
-              activeTag =
-                this.dataset.tag;
+            activeTag = this.dataset.tag;
 
+            resetTagUI('.pf-tag[data-tag]', activeTag);
 
-              resetTagUI(
-                '.pf-tag[data-tag]',
-                activeTag
-              );
+            searchQuery = '';
 
+            document.getElementById('pfSearch').value = '';
 
-              searchQuery = '';
+            pfSearchClear.classList.remove('visible');
 
+            applyFilters();
 
-              document
-                .getElementById('pfSearch')
-                .value = '';
+            scrollToTopOfResults();
 
+          }
+        );
 
-              pfSearchClear.classList.remove(
-                'visible'
-              );
-
-
-              applyFilters();
-
-            }
-          );
-
-        }
-      );
+      }
+    );
 
   }
 
@@ -1686,56 +1437,76 @@
 
   function bindVideoTags() {
 
-    document
-      .querySelectorAll(
-        '.pf-tag[data-vtag]'
-      )
-      .forEach(
-        function (btn) {
+    document.querySelectorAll('.pf-tag[data-vtag]').forEach(
+      function (btn) {
 
-          btn.addEventListener(
-            'click',
-            function () {
+        btn.addEventListener(
+          'click',
+          function () {
 
-              activeVTag =
-                this.dataset.vtag;
+            activeVTag = this.dataset.vtag;
 
+            resetTagUI('.pf-tag[data-vtag]', activeVTag);
 
-              resetTagUI(
-                '.pf-tag[data-vtag]',
-                activeVTag
-              );
+            renderVideos();
 
+            scrollToTopOfResults();
 
-              renderVideos();
+          }
+        );
 
-            }
-          );
-
-        }
-      );
+      }
+    );
 
   }
 
 
-  function resetTagUI(
-    selector,
-    activeVal
-  ) {
+  function resetTagUI(selector, activeVal) {
 
-    document
-      .querySelectorAll(selector)
-      .forEach(
-        function (b) {
+    document.querySelectorAll(selector).forEach(
+      function (b) {
 
-          b.classList.toggle(
-            'active',
-            b.dataset.tag === activeVal ||
-            b.dataset.vtag === activeVal
-          );
+        b.classList.toggle(
+          'active',
+          b.dataset.tag === activeVal || b.dataset.vtag === activeVal
+        );
 
-        }
-      );
+      }
+    );
+
+  }
+
+
+  /* ============================================================
+     SCROLL TO TOP OF RESULTS
+     Jab bhi koi filter/tab trigger ho (photo tag, video tag,
+     media tab, clear-all), user jahan bhi scroll kiya hua ho,
+     page ko us section ke top par le aata hai — taaki naye
+     (filtered) results turant dikhein, na ki user apne aap neeche
+     scroll karke dhoondhta rahe. Load More par ye call NAHI hota,
+     kyunki wahan user wahin bane rehna chahta hai.
+     ============================================================ */
+
+  function scrollToTopOfResults() {
+
+    var target =
+      activeMedia === 'photos' ? pfPhotosSection :
+        activeMedia === 'album' ? pfAlbumSection :
+          pfVideosSection;
+
+    if (!target) return;
+
+    var stickyOffset = 310; // sticky filter bar ke neeche thoda gap rahe -----------------------------------------------
+
+    var top =
+      target.getBoundingClientRect().top +
+      window.pageYOffset -
+      stickyOffset;
+
+    window.scrollTo({
+      top: top < 0 ? 0 : top,
+      behavior: 'smooth'
+    });
 
   }
 
@@ -1746,109 +1517,52 @@
 
   function applyFilters() {
 
-    if (
-      activeMedia !== 'photos'
-    ) {
-
+    if (activeMedia !== 'photos') {
       return;
-
     }
 
 
-    filtered =
-      PHOTOS.filter(
-        function (p) {
+    filtered = PHOTOS.filter(
+      function (p) {
 
-          var tagMatch =
-            activeTag === 'all' ||
-            p.tags.indexOf(
-              activeTag
-            ) !== -1;
+        var tagMatch =
+          activeTag === 'all' ||
+          p.tags.indexOf(activeTag) !== -1;
 
+        var searchMatch =
+          !searchQuery ||
+          p.title.toLowerCase().indexOf(searchQuery) !== -1 ||
+          p.tags.some(function (t) { return t.indexOf(searchQuery) !== -1; });
 
-          var searchMatch =
-            !searchQuery ||
-            p.title
-              .toLowerCase()
-              .indexOf(searchQuery) !== -1 ||
+        return (tagMatch && searchMatch);
 
-            p.tags.some(
-              function (t) {
-
-                return t.indexOf(
-                  searchQuery
-                ) !== -1;
-
-              }
-            );
-
-
-          return (
-            tagMatch &&
-            searchMatch
-          );
-
-        }
-      );
-
-
-    filtered =
-      shuffle(filtered);
-
-
-    currentlyLoaded = 0;
-
-
-    pfGrid.innerHTML = '';
-
-
-    var hasFilters =
-      activeTag !== 'all' ||
-      searchQuery.length > 0;
-
-
-    pfClearAll.classList.toggle(
-      'visible',
-      hasFilters
+      }
     );
 
 
-    if (
-      filtered.length === 0
-    ) {
+    filtered = shuffle(filtered);
 
-      pfEmpty.style.display =
-        '';
+    currentlyLoaded = 0;
 
+    pfGrid.innerHTML = '';
 
-      pfPhotosSection
-        .querySelector(
-          '.pf-load-more-wrap'
-        )
-        .style.display =
-        'none';
+    var hasFilters = activeTag !== 'all' || searchQuery.length > 0;
+
+    pfClearAll.classList.toggle('visible', hasFilters);
 
 
-      pfResultCount.textContent =
-        '0 results';
+    if (filtered.length === 0) {
 
-
+      pfEmpty.style.display = '';
+      pfPhotosSection.querySelector('.pf-load-more-wrap').style.display = 'none';
+      pfResultCount.textContent = '0 results';
       return;
 
     }
 
 
-    pfEmpty.style.display =
-      'none';
-
-
-    pfPhotosSection
-      .querySelector(
-        '.pf-load-more-wrap'
-      )
-      .style.display =
-      '';
-
+    pfEmpty.style.display = 'none';
+    pfPhotosSection.querySelector('.pf-load-more-wrap').style.display = '';
 
     loadBatch();
 
@@ -1861,48 +1575,22 @@
 
   function loadBatch() {
 
-    var batch =
-      filtered.slice(
-        currentlyLoaded,
-        currentlyLoaded + INCREMENT
-      );
-
+    var batch = filtered.slice(currentlyLoaded, currentlyLoaded + INCREMENT);
 
     batch.forEach(
       function (photo, i) {
-
-        pfGrid.appendChild(
-          buildPhotoCard(
-            photo,
-            currentlyLoaded + i
-          )
-        );
-
+        pfGrid.appendChild(buildPhotoCard(photo, currentlyLoaded + i));
       }
     );
 
+    currentlyLoaded += batch.length;
 
-    currentlyLoaded +=
-      batch.length;
+    pfResultCount.textContent = currentlyLoaded + ' of ' + filtered.length + ' photos';
 
-
-    pfResultCount.textContent =
-      currentlyLoaded +
-      ' of ' +
-      filtered.length +
-      ' photos';
-
-
-    pfLoadMore.disabled =
-      currentlyLoaded >=
-      filtered.length;
-
+    pfLoadMore.disabled = currentlyLoaded >= filtered.length;
 
     pfLoadMore.textContent =
-      currentlyLoaded >=
-      filtered.length
-        ? 'All photos loaded'
-        : 'Load More Photos';
+      currentlyLoaded >= filtered.length ? 'All photos loaded' : 'Load More Photos';
 
   }
 
@@ -1912,16 +1600,9 @@
     pfLoadMore.addEventListener(
       'click',
       function () {
-
-        if (
-          currentlyLoaded <
-          filtered.length
-        ) {
-
+        if (currentlyLoaded < filtered.length) {
           loadBatch();
-
         }
-
       }
     );
 
@@ -1934,10 +1615,7 @@
 
   function loadReelBatch() {
 
-    var batch = reelFilteredList.slice(
-      reelLoaded,
-      reelLoaded + REEL_INCREMENT
-    );
+    var batch = reelFilteredList.slice(reelLoaded, reelLoaded + REEL_INCREMENT);
 
     batch.forEach(function (video) {
       pfVideoGrid.appendChild(buildVideoCard(video));
@@ -1945,16 +1623,12 @@
 
     reelLoaded += batch.length;
 
-    pfResultCount.textContent =
-      reelLoaded + ' of ' + reelFilteredList.length + ' reels';
+    pfResultCount.textContent = reelLoaded + ' of ' + reelFilteredList.length + ' reels';
 
-    pfVideoLoadMore.disabled =
-      reelLoaded >= reelFilteredList.length;
+    pfVideoLoadMore.disabled = reelLoaded >= reelFilteredList.length;
 
     pfVideoLoadMore.textContent =
-      reelLoaded >= reelFilteredList.length
-        ? 'All reels loaded'
-        : 'Load More Reels';
+      reelLoaded >= reelFilteredList.length ? 'All reels loaded' : 'Load More Reels';
   }
 
 
@@ -1973,58 +1647,25 @@
      16. BUILD PHOTO CARD 
      ============================================================ */
 
-  function buildPhotoCard(
-    photo,
-    idx
-  ) {
+  function buildPhotoCard(photo, idx) {
 
-    var card =
-      document.createElement('div');
+    var card = document.createElement('div');
 
+    card.className = 'pf-card';
 
-    card.className =
-      'pf-card';
+    card.dataset.idx = idx;
 
+    card.style.animationDelay = (Math.min(idx % 10, 9) * 0.04) + 's';
 
-    card.dataset.idx =
-      idx;
-
-
-    card.style.animationDelay =
-      (
-        Math.min(
-          idx % 10,
-          9
-        ) *
-        0.04
-      ) + 's';
-
-
-    var paddingPct =
-      Math.round(
-        photo.ratio * 100
-      );
-
+    var paddingPct = Math.round(photo.ratio * 100);
 
     var bgStyle =
       photo.src
-
-        ? 'background-image:url(\'' +
-          photo.src +
-          '\'); background-size:cover; background-position:center;'
-
-        : 'background: linear-gradient(150deg, ' +
-          photo.gradient[0] +
-          ', ' +
-          photo.gradient[1] +
-          ');';
-
+        ? 'background-image:url(\'' + photo.src + '\'); background-size:cover; background-position:center;'
+        : 'background: linear-gradient(150deg, ' + photo.gradient[0] + ', ' + photo.gradient[1] + ');';
 
     var thumbStyle =
-      bgStyle +
-      'display:block; width:100%; padding-bottom:' +
-      paddingPct +
-      '%; position:relative;';
+      bgStyle + 'display:block; width:100%; padding-bottom:' + paddingPct + '%; position:relative;';
 
 
     /*
@@ -2036,50 +1677,25 @@
      */
     var badge =
       TAG_LABELS[photo.tag] ||
-      (
-        photo.tags.indexOf('prewedding') !== -1
-          ? 'Pre-Wedding'
-          : photo.tag
-      );
+      (photo.tags.indexOf('prewedding') !== -1 ? 'Pre-Wedding' : photo.tag);
 
 
     card.innerHTML =
-
-      '<div style="' +
-      thumbStyle +
-      '"></div>' +
-
+      '<div style="' + thumbStyle + '"></div>' +
       '<div class="pf-card-overlay">' +
-
-        '<div class="pf-card-info">' +
-
-          '<div class="pf-card-title">' +
-          photo.title +
-          '</div>' +
-
-          '<div class="pf-card-tags">' +
-
-            '<span class="pf-card-tag">' +
-            badge +
-            '</span>' +
-
-          '</div>' +
-
-        '</div>' +
-
+      '<div class="pf-card-info">' +
+      '<div class="pf-card-title">' + photo.title + '</div>' +
+      '<div class="pf-card-tags">' +
+      '<span class="pf-card-tag">' + badge + '</span>' +
       '</div>' +
-
+      '</div>' +
+      '</div>' +
       '<div class="pf-card-zoom">⤢</div>';
 
 
-    card.addEventListener(
-      'click',
-      function () {
-
-        openLightbox(idx);
-
-      }
-    );
+    card.addEventListener('click', function () {
+      openLightbox(idx);
+    });
 
 
     return card;
@@ -2088,7 +1704,7 @@
 
 
   /* ============================================================
-     NAYA — SECTION AL: ALBUM RENDER / OPEN / BACK
+     SECTION AL: ALBUM RENDER / OPEN / BACK
      ============================================================ */
 
   function renderAlbumCovers() {
@@ -2109,12 +1725,12 @@
       card.innerHTML =
         '<div style="' + thumbStyle + '"></div>' +
         '<div class="pf-card-overlay">' +
-          '<div class="pf-card-info">' +
-            '<div class="pf-card-title">' + cat.label + '</div>' +
-            '<div class="pf-card-tags">' +
-              '<span class="pf-card-tag">' + cat.photoCount + ' Photos</span>' +
-            '</div>' +
-          '</div>' +
+        '<div class="pf-card-info">' +
+        '<div class="pf-card-title">' + cat.label + '</div>' +
+        '<div class="pf-card-tags">' +
+        '<span class="pf-card-tag">' + cat.photoCount + ' Photos</span>' +
+        '</div>' +
+        '</div>' +
         '</div>' +
         '<div class="pf-card-zoom">⤢</div>';
 
@@ -2174,39 +1790,22 @@
 
   /* ============================================================
      17. LIGHTBOX
-     UPDATED — openLightbox() ab ek optional "itemsOverride"
-     leta hai, taaki Album ki photos bhi isi lightbox me khul sakein
-     (Photos tab ke normal behavior me koi farak nahi padta).
+     openLightbox() ek optional "itemsOverride" leta hai, taaki
+     Album ki photos bhi isi lightbox me khul sakein (Photos tab
+     ke normal behavior me koi farak nahi padta).
      ============================================================ */
 
-  function openLightbox(
-    startIdx,
-    itemsOverride
-  ) {
+  function openLightbox(startIdx, itemsOverride) {
 
-    lightboxItems =
-      itemsOverride ||
-      filtered.slice(
-        0,
-        currentlyLoaded
-      );
+    lightboxItems = itemsOverride || filtered.slice(0, currentlyLoaded);
 
+    lightboxIndex = startIdx;
 
-    lightboxIndex =
-      startIdx;
+    pfLightbox.classList.add('open');
 
-
-    pfLightbox.classList.add(
-      'open'
-    );
-
-
-    document.body.style.overflow =
-      'hidden';
-
+    document.body.style.overflow = 'hidden';
 
     renderLightboxSlide();
-
     renderLightboxThumbs();
 
   }
@@ -2214,24 +1813,15 @@
 
   function closeLightbox() {
 
-    pfLightbox.classList.remove(
-      'open'
-    );
-
-
-    document.body.style.overflow =
-      '';
+    pfLightbox.classList.remove('open');
+    document.body.style.overflow = '';
 
   }
 
 
   function renderLightboxSlide() {
 
-    var photo =
-      lightboxItems[
-        lightboxIndex
-      ];
-
+    var photo = lightboxItems[lightboxIndex];
 
     if (!photo) return;
 
@@ -2239,351 +1829,176 @@
     if (photo.src) {
 
       pfLbImgWrap.innerHTML =
-
-        '<img src="' +
-        photo.src +
-        '" alt="' +
-        photo.title +
-        '" ' +
-
-        'style="max-width:88vw;' +
-        'max-height:72vh;' +
-        'object-fit:contain;' +
-        'border-radius:6px;' +
-        'animation:pfLbIn .3s ease;">';
+        '<img src="' + photo.src + '" alt="' + photo.title + '" ' +
+        'style="max-width:88vw;max-height:72vh;object-fit:contain;border-radius:6px;animation:pfLbIn .3s ease;">';
 
     } else {
 
       pfLbImgWrap.innerHTML =
-
-        '<div style="' +
-        'width:560px;' +
-        'max-width:80vw;' +
-        'height:380px;' +
-        'max-height:65vh;' +
-        'background:linear-gradient(150deg,' +
-        photo.gradient[0] +
-        ',' +
-        photo.gradient[1] +
-        ');' +
-        'border-radius:8px;' +
-        'animation:pfLbIn .3s ease;">' +
-        '</div>';
+        '<div style="width:560px;max-width:80vw;height:380px;max-height:65vh;' +
+        'background:linear-gradient(150deg,' + photo.gradient[0] + ',' + photo.gradient[1] + ');' +
+        'border-radius:8px;animation:pfLbIn .3s ease;"></div>';
 
     }
 
 
     var badge =
       TAG_LABELS[photo.tag] ||
-      (
-        photo.tags.indexOf('prewedding') !== -1
-          ? 'Pre-Wedding'
-          : photo.tag
-      );
+      (photo.tags.indexOf('prewedding') !== -1 ? 'Pre-Wedding' : photo.tag);
 
 
-    pfLbMeta.textContent =
-      photo.title +
-      ' · ' +
-      badge;
+    pfLbMeta.textContent = photo.title + ' · ' + badge;
+
+    pfLbCounter.textContent = (lightboxIndex + 1) + ' / ' + lightboxItems.length;
 
 
-    pfLbCounter.textContent =
-      (lightboxIndex + 1) +
-      ' / ' +
-      lightboxItems.length;
+    var thumbs = pfLbThumbs.querySelectorAll('.pf-lb-thumb');
 
-
-    var thumbs =
-      pfLbThumbs
-        .querySelectorAll(
-          '.pf-lb-thumb'
-        );
-
-
-    thumbs.forEach(
-      function (t, i) {
-
-        t.classList.toggle(
-          'active',
-          i === lightboxIndex
-        );
-
-      }
-    );
+    thumbs.forEach(function (t, i) {
+      t.classList.toggle('active', i === lightboxIndex);
+    });
 
   }
 
 
   function renderLightboxThumbs() {
 
-    pfLbThumbs.innerHTML =
-      '';
+    pfLbThumbs.innerHTML = '';
 
+    lightboxItems.forEach(function (photo, i) {
 
-    lightboxItems.forEach(
-      function (photo, i) {
+      var t = document.createElement('div');
 
-        var t =
-          document.createElement('div');
+      t.className = 'pf-lb-thumb' + (i === lightboxIndex ? ' active' : '');
 
+      var thumbBg =
+        photo.src
+          ? 'background-image:url(\'' + photo.src + '\');background-size:cover;background-position:center;'
+          : 'background:linear-gradient(150deg,' + photo.gradient[0] + ',' + photo.gradient[1] + ');';
 
-        t.className =
-          'pf-lb-thumb' +
-          (
-            i === lightboxIndex
-              ? ' active'
-              : ''
-          );
+      t.innerHTML = '<div style="width:48px;height:36px;' + thumbBg + '"></div>';
 
+      t.addEventListener('click', function () {
 
-        var thumbBg =
-          photo.src
+        lightboxIndex = i;
 
-            ? 'background-image:url(\'' +
-              photo.src +
-              '\');background-size:cover;background-position:center;'
+        renderLightboxSlide();
 
-            : 'background:linear-gradient(150deg,' +
-              photo.gradient[0] +
-              ',' +
-              photo.gradient[1] +
-              ');';
+        pfLbThumbs.querySelectorAll('.pf-lb-thumb').forEach(function (el, j) {
+          el.classList.toggle('active', j === i);
+        });
 
+      });
 
-        t.innerHTML =
-          '<div style="' +
-          'width:48px;' +
-          'height:36px;' +
-          thumbBg +
-          '"></div>';
+      pfLbThumbs.appendChild(t);
 
-
-        t.addEventListener(
-          'click',
-          function () {
-
-            lightboxIndex =
-              i;
-
-
-            renderLightboxSlide();
-
-
-            pfLbThumbs
-              .querySelectorAll(
-                '.pf-lb-thumb'
-              )
-              .forEach(
-                function (el, j) {
-
-                  el.classList.toggle(
-                    'active',
-                    j === i
-                  );
-
-                }
-              );
-
-          }
-        );
-
-
-        pfLbThumbs.appendChild(
-          t
-        );
-
-      }
-    );
+    });
 
   }
 
 
   function bindLightbox() {
 
-    document
-      .getElementById('pfLbClose')
-      .addEventListener(
-        'click',
-        closeLightbox
-      );
+    document.getElementById('pfLbClose').addEventListener('click', closeLightbox);
 
-
-    pfLightbox.addEventListener(
-      'click',
-      function (e) {
-
-        if (
-          e.target === pfLightbox
-        ) {
-
-          closeLightbox();
-
-        }
-
+    pfLightbox.addEventListener('click', function (e) {
+      if (e.target === pfLightbox) {
+        closeLightbox();
       }
-    );
+    });
 
+    document.getElementById('pfLbPrev').addEventListener('click', function () {
+      lightboxIndex = (lightboxIndex - 1 + lightboxItems.length) % lightboxItems.length;
+      renderLightboxSlide();
+    });
 
-    document
-      .getElementById('pfLbPrev')
-      .addEventListener(
-        'click',
-        function () {
+    document.getElementById('pfLbNext').addEventListener('click', function () {
+      lightboxIndex = (lightboxIndex + 1) % lightboxItems.length;
+      renderLightboxSlide();
+    });
 
-          lightboxIndex =
-            (
-              lightboxIndex -
-              1 +
-              lightboxItems.length
-            ) %
-            lightboxItems.length;
+    document.addEventListener('keydown', function (e) {
 
+      if (!pfLightbox.classList.contains('open')) return;
 
-          renderLightboxSlide();
-
-        }
-      );
-
-
-    document
-      .getElementById('pfLbNext')
-      .addEventListener(
-        'click',
-        function () {
-
-          lightboxIndex =
-            (
-              lightboxIndex +
-              1
-            ) %
-            lightboxItems.length;
-
-
-          renderLightboxSlide();
-
-        }
-      );
-
-
-    document.addEventListener(
-      'keydown',
-      function (e) {
-
-        if (
-          !pfLightbox.classList.contains(
-            'open'
-          )
-        ) return;
-
-
-        if (
-          e.key === 'ArrowLeft'
-        ) {
-
-          document
-            .getElementById(
-              'pfLbPrev'
-            )
-            .click();
-
-        }
-
-
-        if (
-          e.key === 'ArrowRight'
-        ) {
-
-          document
-            .getElementById(
-              'pfLbNext'
-            )
-            .click();
-
-        }
-
-
-        if (
-          e.key === 'Escape'
-        ) {
-
-          closeLightbox();
-
-        }
-
+      if (e.key === 'ArrowLeft') {
+        document.getElementById('pfLbPrev').click();
       }
-    );
+
+      if (e.key === 'ArrowRight') {
+        document.getElementById('pfLbNext').click();
+      }
+
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+
+    });
 
 
     var touchStartX = 0;
 
+    pfLightbox.addEventListener('touchstart', function (e) {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
 
-    pfLightbox.addEventListener(
-      'touchstart',
-      function (e) {
+    pfLightbox.addEventListener('touchend', function (e) {
 
-        touchStartX =
-          e.changedTouches[0]
-            .screenX;
+      var dx = e.changedTouches[0].screenX - touchStartX;
 
-      },
-      {
-        passive: true
-      }
-    );
-
-
-    pfLightbox.addEventListener(
-      'touchend',
-      function (e) {
-
-        var dx =
-          e.changedTouches[0]
-            .screenX -
-          touchStartX;
-
-
-        if (
-          Math.abs(dx) > 50
-        ) {
-
-          if (dx < 0) {
-
-            document
-              .getElementById(
-                'pfLbNext'
-              )
-              .click();
-
-          } else {
-
-            document
-              .getElementById(
-                'pfLbPrev'
-              )
-              .click();
-
-          }
-
+      if (Math.abs(dx) > 50) {
+        if (dx < 0) {
+          document.getElementById('pfLbNext').click();
+        } else {
+          document.getElementById('pfLbPrev').click();
         }
-
-      },
-      {
-        passive: true
       }
-    );
+
+    }, { passive: true });
 
   }
 
 
   /* ============================================================
      YOUTUBE ID EXTRACTOR
+     Handles:
+       - full watch URLs   (...watch?v=ID...)
+       - short youtu.be URLs (youtu.be/ID...)
+       - embed URLs        (.../embed/ID...)
+       - shorts URLs        (.../shorts/ID...)
+       - bare ID, with or without a trailing "?si=..." tracking
+         param (this is the format used everywhere in REEL_DATA,
+         e.g. "sMyX-D9w67A?si=A8ZqDkxGWCT0mB7c")
+
+     PEHLE ISME BUG THA: regex sirf "youtu.be/", "v=" ya "embed/"
+     prefix wale format ko match karta tha. REEL_DATA me saare IDs
+     bina kisi prefix ke seedhe likhe hain ("ID?si=..."), isliye
+     regex kabhi match hi nahi hota tha aur poora raw string
+     (ID + "?si=...") bina process kiye return ho jata tha. Ye
+     "https://www.youtube.com/embed/ID?si=..." bante hue chalta
+     zaroor tha, lekin galti se — asal me ID kabhi extract hi
+     nahi ho raha tha. Ab dono cases (prefixed URL aur bare ID)
+     properly handle hote hain.
      ============================================================ */
 
   function extractYouTubeId(input) {
+
     if (!input) return '';
-    var m = input.match(/(?:youtu\.be\/|v=|embed\/)([A-Za-z0-9_-]{6,})/);
-    return m ? m[1] : input;
+
+    input = String(input).trim();
+
+    // Full/short YouTube URLs — watch?v=, youtu.be/, embed/, shorts/
+    var urlMatch = input.match(/(?:youtu\.be\/|[?&]v=|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{6,})/);
+
+    if (urlMatch) {
+      return urlMatch[1];
+    }
+
+    // Bare ID, optionally followed by "?si=..." or any other query/hash
+    var bareMatch = input.match(/^([A-Za-z0-9_-]{6,})(?:[?#].*)?$/);
+
+    return bareMatch ? bareMatch[1] : input;
+
   }
 
 
@@ -2593,7 +2008,7 @@
      bilkul waisa hi rehta hai jaisa pehle tha.
      ============================================================ */
 
-    function buildVideoCard(v, idx) {
+  function buildVideoCard(v, idx) {
 
     var card = document.createElement('div');
 
@@ -2752,51 +2167,131 @@
      ACTUAL PLAYER INJECT KARNA
      ============================================================ */
 
+  /* ============================================================
+     CLICK-TO-PLAY THUMBNAIL FACADE
+     ============================================================
+     PROBLEM: har video card ke liye seedha real YouTube/Instagram
+     player (heavy iframe + unka apna JS) load ho raha tha, chahe
+     user ne us video ko dekha bhi na ho. Isi wajah se page "wait"
+     jaisa feel deta tha jab user Video tab par jata tha.
+
+     FIX: ab sirf ek halka sa thumbnail image + play button dikhaya
+     jata hai (YouTube khud jo thumbnail deta hai — koi extra load
+     nahi). Asal player (bhaari iframe) TABHI banta hai jab user
+     khud us specific video par click karta hai. Baaki sab cards
+     halke thumbnail hi rehte hain — isse page turant open hota hai.
+     ============================================================ */
+
+  function buildYoutubeFacade(wrap, id, title) {
+
+    var safeTitle = title || 'YouTube video';
+
+    wrap.innerHTML =
+      '<div class="pf-yt-facade" style="position:relative;width:100%;height:100%;' +
+      'cursor:pointer;background:#000;overflow:hidden;">' +
+      '<img src="https://i.ytimg.com/vi/' + id + '/maxresdefault.jpg" alt="' + safeTitle + '" ' +
+      'loading="lazy" style="width:100%;height:100%;object-fit:cover;display:block;" ' +
+      'onerror="this.onerror=null;this.src=\'https://i.ytimg.com/vi/' + id + '/sddefault.jpg\';">' +
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">' +
+      '<div style="width:56px;height:56px;border-radius:50%;background:rgba(0,0,0,.65);' +
+      'display:flex;align-items:center;justify-content:center;">' +
+      '<div style="width:0;height:0;border-top:11px solid transparent;' +
+      'border-bottom:11px solid transparent;border-left:18px solid #fff;margin-left:4px;"></div>' +
+      '</div>' +
+      '</div>' +
+      '</div>';
+
+    wrap.querySelector('.pf-yt-facade').addEventListener(
+      'click',
+      function () {
+
+        wrap.innerHTML =
+          '<iframe src="https://www.youtube.com/embed/' + id + '?autoplay=1" title="' + safeTitle + '" ' +
+          'frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
+          'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+
+      },
+      { once: true }
+    );
+
+  }
+
+  function buildInstagramFacade(wrap, src, title) {
+
+    wrap.innerHTML =
+      '<div class="pf-ig-facade" style="position:relative;width:100%;height:100%;cursor:pointer;' +
+      'display:flex;align-items:center;justify-content:center;color:#fff;text-align:center;' +
+      'background:linear-gradient(135deg,#405de6,#5851db,#833ab4,#c13584,#e1306c,#fd1d1d);">' +
+      '<div>' +
+      '<div style="font-size:30px;line-height:1;">&#9658;</div>' +
+      '<div style="margin-top:6px;font-size:13px;opacity:.9;">Tap to load Reel</div>' +
+      '</div>' +
+      '</div>';
+
+    wrap.querySelector('.pf-ig-facade').addEventListener(
+      'click',
+      function () {
+
+        var permalink = extractInstagramPermalink(src);
+
+        wrap.innerHTML =
+          '<blockquote class="instagram-media" data-instgrm-permalink="' +
+          permalink +
+          '" data-instgrm-version="14" style="margin:0;width:100%;"></blockquote>';
+
+        ensureInstagramEmbedScript(function () {
+          if (window.instgrm && window.instgrm.Embeds) {
+            window.instgrm.Embeds.process();
+          }
+        });
+
+      },
+      { once: true }
+    );
+
+  }
+
+
+  /* ============================================================
+     ACTUAL PLAYER FACADE INJECT KARNA
+     (real player nahi — sirf thumbnail facade banata hai; asal
+     player click hone par facade ke andar khud ban jata hai)
+     ============================================================ */
+
   function loadVideoIntoWrap(wrap, v) {
 
     if (wrap.dataset.loaded === '1') return;
     wrap.dataset.loaded = '1';
 
-    // Tarika: seedha iframe paste kiya ho (Teaser/Cinematic ke liye hamesha yehi)
+    // Tarika: teaser/cinematic ka pura <iframe...> HTML string diya hua hai —
+    // usme se YouTube ID nikaal ke thumbnail facade banao
     if (v.iframe) {
 
-      wrap.innerHTML = v.iframe;
+      var idFromIframe = extractYouTubeId(v.iframe);
+
+      if (idFromIframe) {
+        buildYoutubeFacade(wrap, idFromIframe, v.title);
+      } else {
+        // ID na mile (bahut rare case) to purana fallback — seedha iframe
+        wrap.innerHTML = v.iframe;
+      }
+
       return;
 
     }
 
     // Tarika: Instagram Reel
     if (v.kind === 'instagram' && v.src) {
-
-      var permalink = extractInstagramPermalink(v.src);
-
-      wrap.innerHTML =
-        '<blockquote class="instagram-media" data-instgrm-permalink="' +
-        permalink +
-        '" data-instgrm-version="14" style="margin:0;width:100%;"></blockquote>';
-
-      ensureInstagramEmbedScript(function () {
-
-        if (window.instgrm && window.instgrm.Embeds) {
-          window.instgrm.Embeds.process();
-        }
-
-      });
-
+      buildInstagramFacade(wrap, v.src, v.title);
       return;
-
     }
 
-    // Tarika: YouTube (ID ya poora link)
+    // Tarika: YouTube (bare ID, ID+?si=..., ya poora link — sab handle hote hain)
     if (v.kind === 'youtube' && v.src) {
 
       var ytId = extractYouTubeId(v.src);
 
-      wrap.innerHTML =
-        '<iframe src="https://www.youtube.com/embed/' + ytId +
-        '" title="' + v.title + '" loading="lazy" frameborder="0" ' +
-        'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" ' +
-        'referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>';
+      buildYoutubeFacade(wrap, ytId, v.title);
 
       return;
 
@@ -2804,12 +2299,9 @@
 
     // Tarika: Local / hosted video file
     if (v.kind === 'file' && v.src) {
-
       wrap.innerHTML =
         '<video src="' + v.src + '" controls preload="none" style="width:100%;height:100%;object-fit:cover;"></video>';
-
       return;
-
     }
 
     // kuch nahi diya gaya
@@ -2825,26 +2317,16 @@
 
   function renderVideos() {
 
-    var vFiltered =
-      VIDEOS.filter(
-        function (v) {
+    var vFiltered = VIDEOS.filter(
+      function (v) {
 
-          var mediaMatch =
-            v.media === activeMedia;
+        var mediaMatch = v.media === activeMedia;
+        var tagMatch = activeVTag === 'all' || v.vtag === activeVTag;
 
+        return (mediaMatch && tagMatch);
 
-          var tagMatch =
-            activeVTag === 'all' ||
-            v.vtag === activeVTag;
-
-
-          return (
-            mediaMatch &&
-            tagMatch
-          );
-
-        }
-      );
+      }
+    );
 
 
     /* REEL — random 12 se shuru, phir Load More */
@@ -2870,230 +2352,104 @@
     }
 
 
-    /* ---- TEASER / CINEMATIC — UNCHANGED (sab ek saath) ---- */
+    /* ---- TEASER / CINEMATIC — sab ek saath ---- */
 
     pfVideoGrid.classList.remove('is-reels');
     pfVideoLoadMoreWrap.style.display = 'none';
     pfVideoGrid.innerHTML = '';
 
+    pfResultCount.textContent = vFiltered.length + ' videos';
 
-    pfResultCount.textContent =
-      vFiltered.length +
-      ' videos';
+    vFiltered.forEach(function (v, i) {
+      pfVideoGrid.appendChild(buildVideoCard(v, i));
+    });
 
-
-    vFiltered.forEach(
-      function (v, i) {
-
-        pfVideoGrid.appendChild(buildVideoCard(v, i));
-
-      }
-    );
-
-
-    if (
-      vFiltered.length === 0
-    ) {
-
-      pfEmpty.style.display =
-        '';
-
-    } else {
-
-      pfEmpty.style.display =
-        'none';
-
-    }
+    pfEmpty.style.display = vFiltered.length === 0 ? '' : 'none';
 
   }
 
 
   /* ============================================================
-     19. CLEAR ALL FILTERS (UNCHANGED)
+     19. CLEAR ALL FILTERS
      ============================================================ */
 
   function clearAllFilters() {
 
-    activeTag =
-      'all';
+    activeTag = 'all';
+    searchQuery = '';
 
+    document.getElementById('pfSearch').value = '';
 
-    searchQuery =
-      '';
+    pfSearchClear.classList.remove('visible');
+    pfClearAll.classList.remove('visible');
 
-
-    document
-      .getElementById(
-        'pfSearch'
-      )
-      .value =
-      '';
-
-
-    pfSearchClear.classList.remove(
-      'visible'
-    );
-
-
-    pfClearAll.classList.remove(
-      'visible'
-    );
-
-
-    resetTagUI(
-      '.pf-tag[data-tag]',
-      'all'
-    );
-
+    resetTagUI('.pf-tag[data-tag]', 'all');
 
     applyFilters();
+
+    scrollToTopOfResults();
 
   }
 
 
   /* ============================================================
-     20. QUERY FORM (UNCHANGED)
+     20. QUERY FORM
      ============================================================ */
 
   function bindQueryForm() {
 
-    document
-      .getElementById(
-        'pfQueryForm'
-      )
-      .addEventListener(
-        'submit',
-        function (e) {
+    document.getElementById('pfQueryForm').addEventListener(
+      'submit',
+      function (e) {
 
-          e.preventDefault();
+        e.preventDefault();
 
+        var query = document.getElementById('pfQueryInput').value.trim();
+        var name = document.getElementById('pfQueryName').value.trim();
+        var phone = document.getElementById('pfQueryPhone').value.trim();
+        var note = document.getElementById('pfQueryNote');
 
-          var query =
-            document
-              .getElementById(
-                'pfQueryInput'
-              )
-              .value
-              .trim();
-
-
-          var name =
-            document
-              .getElementById(
-                'pfQueryName'
-              )
-              .value
-              .trim();
-
-
-          var phone =
-            document
-              .getElementById(
-                'pfQueryPhone'
-              )
-              .value
-              .trim();
-
-
-          var note =
-            document.getElementById(
-              'pfQueryNote'
-            );
-
-
-          if (
-            !query ||
-            !name ||
-            !phone
-          ) {
-
-            note.textContent =
-              'Please fill in all fields.';
-
-
-            note.style.color =
-              '#c0392b';
-
-
-            return;
-
-          }
-
-
-          /* ======================================================
-             📩 BACKEND / WHATSAPP API
-             ======================================================
-
-             Yahan future me apna WhatsApp API/backend laga sakte ho.
-
-             ====================================================== */
-
-
-          console.log(
-            'Portfolio sample request:',
-            {
-              name: name,
-              phone: phone,
-              query: query
-            }
-          );
-
-
-          note.textContent =
-            'Thank you, ' +
-            name +
-            '! We\'ll share matching samples with you shortly.';
-
-
-          note.style.color =
-            'var(--green-dark)';
-
-
-          this.reset();
-
+        if (!query || !name || !phone) {
+          note.textContent = 'Please fill in all fields.';
+          note.style.color = '#c0392b';
+          return;
         }
-      );
+
+
+        /* ======================================================
+           BACKEND / WHATSAPP API
+           ======================================================
+           Yahan future me apna WhatsApp API/backend laga sakte ho.
+           ====================================================== */
+
+        console.log('Portfolio sample request:', { name: name, phone: phone, query: query });
+
+        note.textContent = 'Thank you, ' + name + '! We\'ll share matching samples with you shortly.';
+        note.style.color = 'var(--green-dark)';
+
+        this.reset();
+
+      }
+    );
 
   }
 
 
   /* ============================================================
-     21. SHUFFLE (UNCHANGED — Reel ke random-12 ke liye bhi
-     yehi function reuse hota hai)
+     21. SHUFFLE (Reel ke random-12 ke liye bhi yehi function
+     reuse hota hai)
      ============================================================ */
 
   function shuffle(arr) {
 
-    var a =
-      arr.slice();
+    var a = arr.slice();
 
-
-    for (
-      var i = a.length - 1;
-      i > 0;
-      i--
-    ) {
-
-      var j =
-        Math.floor(
-          Math.random() *
-          (i + 1)
-        );
-
-
-      var tmp =
-        a[i];
-
-
-      a[i] =
-        a[j];
-
-
-      a[j] =
-        tmp;
-
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
     }
-
 
     return a;
 
@@ -3101,20 +2457,13 @@
 
 
   /* ============================================================
-     22. CURRENT YEAR (UNCHANGED)
+     22. CURRENT YEAR
      ============================================================ */
 
-  var yearEl =
-    document.getElementById(
-      'year'
-    );
-
+  var yearEl = document.getElementById('year');
 
   if (yearEl) {
-
-    yearEl.textContent =
-      new Date().getFullYear();
-
+    yearEl.textContent = new Date().getFullYear();
   }
 
 

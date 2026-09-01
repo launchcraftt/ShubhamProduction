@@ -6,7 +6,7 @@
 /* ===== STICKY FILTER BAR ===== */
 .pf-sticky-bar{
   position: sticky;
-  top: 0;
+  top: 70px;
   z-index: 80;
   background: rgba(255,255,255,.97);
   backdrop-filter: blur(12px);
@@ -493,7 +493,7 @@
   .pf-grid{ columns: 2; column-gap: 10px; }
   .pf-card{ margin-bottom: 10px; }
   .pf-filter-row{ flex-wrap: wrap; overflow-x: auto; flex-wrap: nowrap; }
-  .pf-filter-group{ flex-wrap: wrap; }
+  .pf-filter-group{ flex-wrap: nowrap; }
   .pf-video-grid{ grid-template-columns: 1fr; gap: 18px; }
   .pf-video-grid.is-reels{ grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .pf-video-card{ border-radius: 12px; }
@@ -520,4 +520,15 @@
     animation: none !important;
     transition: none !important;
   }
+}
+
+
+/* Updated */
+
+.pf-yt-facade,
+.pf-ig-facade{
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
 }
