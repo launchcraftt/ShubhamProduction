@@ -10,11 +10,11 @@
     whatsappNumber: '918802389087',
 
     offers: [
-      { title: 'Free Pre-Wedding Shoot in Delhi',  subtitle: 'when you book any Wedding package', codePrefix: 'PREWED' },
-      { title: 'Early-Bird Discount',              subtitle: 'Book 3+ months in advance & save more', codePrefix: 'EARLY' },
-      { title: 'Upto ₹25,000 OFF',                 subtitle: 'on all Wedding Photography Packages', codePrefix: 'DIS' },
-      { title: 'Free Extra Edited Data',           subtitle: 'on Premium & Signature packages', codePrefix: 'EDIT' },
-      { title: 'Get Upto 30% OFF',                 subtitle: 'on your total package — all bookings', codePrefix: 'DIS' },
+      { title: 'Free Pre-Wedding Shoot in Delhi',  subtitle: 'Book Our Premium Package', codePrefix: 'PREWED' },
+      // { title: 'Early-Bird Discount',              subtitle: 'Book 3+ months in advance & save more', codePrefix: 'EARLY' },
+      // { title: 'Upto ₹25,000 OFF',                 subtitle: 'on all Wedding Photography Packages', codePrefix: 'DIS' },
+      // { title: 'Free Extra Edited Data',           subtitle: 'on Premium & Signature packages', codePrefix: 'EDIT' },
+      // { title: 'Get Upto 30% OFF',                 subtitle: 'on your total package — all bookings', codePrefix: 'DIS' },
     ],
 
     codePrefix: 'WED',
@@ -23,14 +23,11 @@
 
     disclaimerText: 'Valid for new bookings only.',
 
-    // Pehli baar popup kab dikhega (page load ke kitne ms baad) — bashart user active ho
-    firstDelayMs: 10000,
+    // Pehli baar popup kab dikhega (page load ke kitne ms baad)
+    firstDelayMs: 60000,
 
-    // Ek offer close/action hone ke BAAD kitni der wait karke agla dikhana hai
-    repeatMs: 30000,
-
-    // Kitni der tak koi mouse/keyboard/scroll activity na ho to user ko "idle" maan lo
-    idleTimeoutMs: 30000
+    // Uske baad har baar kitni der me dobara dikhega (1 minute = 60000ms)
+    repeatMs: 180000
   };
 
 
@@ -131,7 +128,7 @@
 
 
   /* ============================================================
-     SHOW / HIDE + ACTIVITY-AWARE SCHEDULING
+     SHOW / HIDE — SIMPLE FIXED TIMERS
      ============================================================ */
 
   function init() {
@@ -139,11 +136,6 @@
     if (!CONFIG.offers || CONFIG.offers.length === 0) return;
 
     var overlay = buildPopup();
-    var converted = false;      // WhatsApp button dab gaya
-    var userIdle = false;       // koi activity na ho to true ho jaayega
-    var idleTimer = null;
-    var waitingToShow = false;  // "dikhaana hai lekin abhi user active/visible nahi hai"
-    var nextShowTimer = null;
 
     var titleEl = document.getElementById('opTitle');
     var subtitleEl = document.getElementById('opSubtitle');
@@ -188,44 +180,6 @@
       }
     });
 
-    /* ---------- Activity / visibility tracking ---------- */
-
-    function isPageUsable() {
-      return document.visibilityState === 'visible' && !userIdle;
-    }
-
-    function armIdleTimer() {
-      clearTimeout(idleTimer);
-      idleTimer = setTimeout(function () {
-        userIdle = true;
-      }, CONFIG.idleTimeoutMs);
-    }
-
-    function onUserActive() {
-      userIdle = false;
-      armIdleTimer();
-
-      // agar koi popup dikhana pending tha aur ab conditions match ho gayi
-      if (waitingToShow && isPageUsable() && !converted) {
-        waitingToShow = false;
-        show();
-      }
-    }
-
-    ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(function (evt) {
-      document.addEventListener(evt, onUserActive, { passive: true });
-    });
-
-    document.addEventListener('visibilitychange', function () {
-      if (document.visibilityState === 'visible') {
-        onUserActive();
-      }
-    });
-
-    armIdleTimer(); // start karte hi ek idle-window de do
-
-    /* ---------- Show / hide ---------- */
-
     function show() {
       currentOffer = nextOffer();
       titleEl.textContent = currentOffer.title;
@@ -238,50 +192,26 @@
       overlay.classList.remove('op-open');
     }
 
-    function isOpen() {
-      return overlay.classList.contains('op-open');
-    }
-
-    // Popup dikhaane ki koshish — agar user active/visible nahi hai to wait karo,
-    // jaise hi activity aayegi, apne aap dikh jaayega.
-    function attemptShow() {
-      if (converted || isOpen()) return;
-      if (isPageUsable()) {
+    // Pehli baar firstDelayMs par, uske baad har repeatMs (1 min) par — hamesha
+    function scheduleShow(delay) {
+      setTimeout(function () {
         show();
-      } else {
-        waitingToShow = true;
-      }
+        scheduleShow(CONFIG.repeatMs);
+      }, delay);
     }
 
-    // Sirf popup band hone ke BAAD (close / bahar click) agla show schedule hota hai —
-    // isliye agla offer tab tak nahi aayega jab tak current wala "cross" na ho jaaye.
-    function scheduleNextAfterDismiss() {
-      if (converted) return;
-      clearTimeout(nextShowTimer);
-      nextShowTimer = setTimeout(attemptShow, CONFIG.repeatMs);
-    }
-
-    document.getElementById('opClose').addEventListener('click', function () {
-      hide();
-      scheduleNextAfterDismiss();
-    });
+    document.getElementById('opClose').addEventListener('click', hide);
 
     overlay.addEventListener('click', function (e) {
-      if (e.target === overlay) {
-        hide();
-        scheduleNextAfterDismiss();
-      }
+      if (e.target === overlay) hide();
     });
 
     whatsappBtn.addEventListener('click', function () {
-      converted = true;
       hide();
-      clearTimeout(nextShowTimer);
-      waitingToShow = false;
     });
 
     // Pehli baar
-    setTimeout(attemptShow, CONFIG.firstDelayMs);
+    scheduleShow(CONFIG.firstDelayMs);
   }
 
   if (document.readyState === 'loading') {
