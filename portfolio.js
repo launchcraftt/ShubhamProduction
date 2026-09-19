@@ -642,13 +642,7 @@
       title: 'Mohit & Himani',
       iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/S6FvG61BGoY?si=AunH-KTLprgneXX_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
     },
-
-    {
-      media: 'teaser',
-      vtag: 'wedding',
-      title: 'Amit & Anureet',
-      iframe: '<iframe width="560" height="315" src="https://www.youtube.com/embed/lDuJwZf2tUU?si=ug3O2Nda3zBm46mO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>'
-    },
+    
     {
       media: 'teaser',
       vtag: 'wedding',
