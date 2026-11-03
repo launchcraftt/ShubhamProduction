@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+    function isAdmin() {
+      return request.auth != null && exists(/databases/$(db)/documents/admins/$(request.auth.uid));
+    }
+    // Pehla admin sign up karte hi ye lock ho jata hai; uske baad naya admin sign up nahi ho sakta
+    match /config/setup {
+      allow read: if true;
+      allow create: if request.auth != null && !exists(/databases/$(db)/documents/config/setup);
+    }
+    match /admins/{id} {
+      allow read: if request.auth != null && (request.auth.uid == id || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == id && !exists(/databases/$(db)/documents/config/setup);
+      allow update, delete: if isAdmin();
+    }
+    match /clients/{id} {
+      allow read: if isAdmin() || (request.auth != null && request.auth.uid == id);
+      allow create, delete: if isAdmin();
+      // client sirf apni profile/verification/review badal sakta hai
+      // client sirf apna verification status badal sakta hai, aur verified=true tabhi jab uska Google account jud chuka ho
+      allow update: if isAdmin() || (request.auth != null && request.auth.uid == id
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['verified','verifiedAt','googleEmail'])
+        && (request.resource.data.verified != true || ('google.com' in request.auth.token.firebase.identities)));
+    }
+    match /clientSecrets/{id} { allow read, write: if isAdmin(); }
+    match /projects/{id} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.clientId == request.auth.uid);
+      allow write: if isAdmin();
+    }
+    match /events/{id} {
+      allow read: if isAdmin() || (request.auth != null && resource.data.clientId == request.auth.uid);
+      allow write: if isAdmin();
+    }
+  }
+}
