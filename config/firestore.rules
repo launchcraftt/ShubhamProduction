@@ -1,40 +1,83 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{db}/documents {
-    function isAdmin() {
+    // The real owner (first admin)
+    function isOwner() {
       return request.auth != null && exists(/databases/$(db)/documents/admins/$(request.auth.uid));
+    }
+    // Staff member given "Full access" by the owner (and login not paused)
+    function isFull() {
+      return request.auth != null
+        && exists(/databases/$(db)/documents/staff/$(request.auth.uid))
+        && get(/databases/$(db)/documents/staff/$(request.auth.uid)).data.get('active', true) == true
+        && get(/databases/$(db)/documents/staff/$(request.auth.uid)).data.get('access', 'limited') == 'full';
+    }
+    // Owner or full-access staff: can see / edit all studio data
+    function isAdmin() { return isOwner() || isFull(); }
+    // Staff account exists AND access is not paused
+    function staffOn() {
+      return request.auth != null
+        && exists(/databases/$(db)/documents/staff/$(request.auth.uid))
+        && get(/databases/$(db)/documents/staff/$(request.auth.uid)).data.get('active', true) == true;
     }
     // Pehla admin sign up karte hi ye lock ho jata hai; uske baad naya admin sign up nahi ho sakta
     match /config/setup {
       allow read: if true;
       allow create: if request.auth != null && !exists(/databases/$(db)/documents/config/setup);
     }
+    // NEW: studio profile (name, number, photo) - clients/staff read, only admin writes
+    match /config/studio {
+      allow read: if request.auth != null;
+      allow write: if isOwner();
+    }
     match /admins/{id} {
-      allow read: if request.auth != null && (request.auth.uid == id || isAdmin());
+      allow read: if request.auth != null && (request.auth.uid == id || isOwner());
       allow create: if request.auth != null && request.auth.uid == id && !exists(/databases/$(db)/documents/config/setup);
-      allow update, delete: if isAdmin();
+      allow update, delete: if isOwner();
     }
     match /clients/{id} {
       allow read: if isAdmin() || (request.auth != null && request.auth.uid == id);
       allow create, delete: if isAdmin();
-      // client sirf apna verification status badal sakta hai, aur verified=true tabhi jab uska Google account jud chuka ho
       allow update: if isAdmin() || (request.auth != null && request.auth.uid == id
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['verified','verifiedAt','googleEmail'])
         && (request.resource.data.verified != true || ('google.com' in request.auth.token.firebase.identities)));
     }
     match /clientSecrets/{id} { allow read, write: if isAdmin(); }
+
+    // Projects hold the prices -> staff can NEVER read them
     match /projects/{id} {
-      allow read: if isAdmin() || (request.auth != null && resource.data.clientId == request.auth.uid);
+      allow read: if isAdmin() || (request.auth != null && (resource.data.clientId == request.auth.uid || request.auth.uid in resource.data.ownerIds));
       allow write: if isAdmin();
     }
+    // Events have no prices. Staff only get events of projects the admin assigned (staffIds)
     match /events/{id} {
-      allow read: if isAdmin() || (request.auth != null && resource.data.clientId == request.auth.uid);
+      allow read: if isAdmin()
+        || (request.auth != null && (resource.data.clientId == request.auth.uid || request.auth.uid in resource.data.clientIds))
+        || (staffOn() && request.auth.uid in resource.data.staffIds);
       allow write: if isAdmin();
     }
-    // NEW: delivery cards (admin likhta hai, client sirf apne cards dekh sakta hai)
     match /deliveries/{id} {
       allow read: if isAdmin() || (request.auth != null && resource.data.clientId == request.auth.uid);
       allow write: if isAdmin();
+    }
+
+    // NEW: staff accounts (admin manages; staff can only read their own profile)
+    // Only the owner can add / edit / delete staff or give Full access
+    match /staff/{id} {
+      allow read: if isAdmin() || (request.auth != null && request.auth.uid == id);
+      allow write: if isOwner();
+    }
+    match /staffSecrets/{id} { allow read, write: if isOwner(); }
+
+    // NEW: staff messages / access requests
+    match /staffRequests/{id} {
+      allow read: if isAdmin() || (staffOn() && resource.data.staffId == request.auth.uid);
+      allow create: if staffOn()
+        && request.resource.data.staffId == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 1000;
+      allow update, delete: if isAdmin();
     }
   }
 }

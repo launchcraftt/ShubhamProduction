@@ -252,7 +252,6 @@ table.mini{ min-width:0; } table.mini td{ padding: 12px 4px; }
 .delivery.soon{ background:#fff; border:1px solid var(--line); box-shadow:none; }
 .delivery.soon > i{ color: var(--green); }
 .delivery.soon h3{ color: var(--black); } .delivery.soon p{ color: var(--ink-soft); }
-
 .dgrid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:18px; margin-bottom:24px; }
 .dcard{ display:flex; flex-direction:column; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; color:inherit; box-shadow: 0 8px 20px rgba(0,0,0,.05); transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease); }
 a.dcard:hover{ transform: translateY(-6px); box-shadow: 0 22px 40px rgba(0,0,0,.12); border-color: var(--green); }
@@ -262,7 +261,7 @@ a.dcard:hover .dthumb img{ transform: scale(1.07); }
 .dtitle{ padding:14px 16px 16px; display:flex; flex-direction:column; gap:4px; }
 .dtitle b{ font-family: var(--font-display); font-size:18px; color: var(--black); }
 .dtitle span{ font-size:12px; color: var(--green-dark); font-weight:600; letter-spacing:.04em; }
-.dtitle .dl{ color: var(--ink-soft); font-weight:400; word-break:break-all; display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
+.dtitle .dl{ color: var(--ink-soft); font-weight:400; word-break:break-all; display:-webkit-box; line-clamp:1; -webkit-box-orient:vertical; overflow:hidden; }
 .dcard.adm .row-actions{ padding:0 16px 16px; }
 
 /* ---------- Google review card ---------- */
@@ -358,3 +357,459 @@ a.dcard:hover .dthumb img{ transform: scale(1.07); }
   .pay-grid{ gap:6px; }
   .pay-grid small{ font-size:9.5px; letter-spacing:.06em; }
 }
+
+
+/* Add new file  */
+
+/* ===== ADD THIS AT THE VERY END OF css/portal.css ===== */
+
+/* multi-line text (function dates, messages) */
+.pre{ white-space:pre-line; }
+.meta .wide, .kvs .wide{ grid-column:1 / -1; }
+
+/* fields that appear only for a chosen option (service = Other) */
+.dep[hidden]{ display:none; }
+
+/* checkbox list (staff -> projects they can see) */
+.checks{ display:grid; gap:8px; max-height:220px; overflow:auto; padding:2px; }
+.portal-body label.chk{ display:flex; align-items:flex-start; gap:10px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius); text-transform:none; letter-spacing:0; font-weight:500; font-size:13.5px; cursor:pointer; }
+.portal-body .chk input{ width:auto; margin-top:2px; padding:0; }
+.portal-body .chk:hover{ border-color:var(--green); }
+
+/* copy rows after creating a client / staff */
+.cred{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.cred small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a86; }
+.cred b{ font-size:18px; letter-spacing:.02em; word-break:break-all; }
+.modal .acts{ flex-wrap:wrap; }
+
+/* "Open" look on client delivery cards */
+.open-btn{ display:inline-block; margin-top:6px; padding:7px 14px; border-radius:20px; background:var(--green-pale); color:var(--green-dark) !important; font-weight:700 !important; }
+a.dcard:hover .open-btn{ background:var(--green); color:#fff !important; }
+.dcard.adm .row-actions .btn{ flex:1 1 auto; justify-content:center; }
+
+/* studio contact card (client portal) */
+.studio{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin:28px 0 0; padding:20px 22px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; }
+.studio-b{ flex:1 1 200px; min-width:0; }
+.studio-b small{ display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--green-dark); }
+.studio-b h3{ font-size:22px; margin:2px 0 4px; }
+.studio-b span{ font-size:14px; color:var(--ink-soft); }
+.studio-b span i{ margin-right:6px; color:var(--green-dark); }
+@media (max-width:560px){ .studio .btn{ width:100%; } }
+
+/* staff messages */
+.card.req .reply{ background:var(--green-pale); border-radius:8px; padding:10px 12px; }
+.badge{ margin-left:auto; font-style:normal; background:#d9480f; color:#fff; font-size:11px; font-weight:700; min-width:20px; height:20px; padding:0 6px; border-radius:10px; display:inline-grid; place-items:center; }
+details > summary{ cursor:pointer; list-style:none; }
+
+
+/* New codes for team and project count  */
+
+/* ===== ADD THIS AT THE VERY END OF css/portal.css ===== */
+
+/* multi-line text (function dates, messages) */
+.pre{ white-space:pre-line; }
+.meta .wide, .kvs .wide{ grid-column:1 / -1; }
+
+/* fields that appear only for a chosen option (service = Other) */
+.dep[hidden]{ display:none; }
+
+/* checkbox list (staff -> projects they can see) */
+.checks{ display:grid; gap:8px; max-height:220px; overflow:auto; padding:2px; }
+.portal-body label.chk{ display:flex; align-items:flex-start; gap:10px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius); text-transform:none; letter-spacing:0; font-weight:500; font-size:13.5px; cursor:pointer; }
+.portal-body .chk input{ width:auto; margin-top:2px; padding:0; }
+.portal-body .chk:hover{ border-color:var(--green); }
+
+/* copy rows after creating a client / staff */
+.cred{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.cred small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a86; }
+.cred b{ font-size:18px; letter-spacing:.02em; word-break:break-all; }
+.modal .acts{ flex-wrap:wrap; }
+
+/* "Open" look on client delivery cards */
+.open-btn{ display:inline-block; margin-top:6px; padding:7px 14px; border-radius:20px; background:var(--green-pale); color:var(--green-dark) !important; font-weight:700 !important; }
+a.dcard:hover .open-btn{ background:var(--green); color:#fff !important; }
+.dcard.adm .row-actions .btn{ flex:1 1 auto; justify-content:center; }
+
+/* studio contact card (client portal) */
+.studio{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin:28px 0 0; padding:20px 22px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; }
+.studio-b{ flex:1 1 200px; min-width:0; }
+.studio-b small{ display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--green-dark); }
+.studio-b h3{ font-size:22px; margin:2px 0 4px; }
+.studio-b span{ font-size:14px; color:var(--ink-soft); }
+.studio-b span i{ margin-right:6px; color:var(--green-dark); }
+@media (max-width:560px){ .studio .btn{ width:100%; } }
+
+/* staff messages */
+.card.req .reply{ background:var(--green-pale); border-radius:8px; padding:10px 12px; }
+.badge{ margin-left:auto; font-style:normal; background:#d9480f; color:#fff; font-size:11px; font-weight:700; min-width:20px; height:20px; padding:0 6px; border-radius:10px; display:inline-grid; place-items:center; }
+details > summary{ cursor:pointer; list-style:none; }
+
+
+/* ===== ROUND 2: coverage side, function dates rows, team counts ===== */
+.portal-body label.big{ font-size:14px; color:var(--green-dark); }
+.portal-body select.big{ font-size:20px; font-weight:700; padding:16px 14px; border-color:var(--green); background:var(--green-pale); }
+.sidebadge{ align-self:flex-start; display:inline-block; font-family:var(--font-display); font-size:21px; font-weight:700; line-height:1.2; padding:7px 16px; border-radius:22px; background:var(--green-dark); color:#fff; letter-spacing:.01em; }
+.funcs{ display:grid; gap:8px; margin-bottom:8px; }
+.frow{ display:grid; grid-template-columns:1.25fr 1.25fr 1fr auto; gap:6px; align-items:center; }
+.portal-body .frow input, .portal-body .frow select{ padding:10px 8px; font-size:13px; }
+.frow .lnk{ font-size:16px; color:#b3261e; padding:6px 8px; }
+.teamg{ display:grid; gap:8px; }
+.trow{ display:grid; grid-template-columns:1fr 90px; gap:10px; align-items:center; }
+.trow span{ font-size:14px; font-weight:600; }
+.portal-body .trow input{ text-align:center; font-weight:700; }
+@media (max-width:560px){ .frow{ grid-template-columns:1fr 1fr auto; } .frow input[type=date]{ grid-column:1 / -1; } }
+
+
+/* Round 3 add */
+
+/* ===== ADD THIS AT THE VERY END OF css/portal.css ===== */
+
+/* multi-line text (function dates, messages) */
+.pre{ white-space:pre-line; }
+.meta .wide, .kvs .wide{ grid-column:1 / -1; }
+
+/* fields that appear only for a chosen option (service = Other) */
+.dep[hidden]{ display:none; }
+
+/* checkbox list (staff -> projects they can see) */
+.checks{ display:grid; gap:8px; max-height:220px; overflow:auto; padding:2px; }
+.portal-body label.chk{ display:flex; align-items:flex-start; gap:10px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius); text-transform:none; letter-spacing:0; font-weight:500; font-size:13.5px; cursor:pointer; }
+.portal-body .chk input{ width:auto; margin-top:2px; padding:0; }
+.portal-body .chk:hover{ border-color:var(--green); }
+
+/* copy rows after creating a client / staff */
+.cred{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.cred small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a86; }
+.cred b{ font-size:18px; letter-spacing:.02em; word-break:break-all; }
+.modal .acts{ flex-wrap:wrap; }
+
+/* "Open" look on client delivery cards */
+.open-btn{ display:inline-block; margin-top:6px; padding:7px 14px; border-radius:20px; background:var(--green-pale); color:var(--green-dark) !important; font-weight:700 !important; }
+a.dcard:hover .open-btn{ background:var(--green); color:#fff !important; }
+.dcard.adm .row-actions .btn{ flex:1 1 auto; justify-content:center; }
+
+/* studio contact card (client portal) */
+.studio{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin:28px 0 0; padding:20px 22px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; }
+.studio-b{ flex:1 1 200px; min-width:0; }
+.studio-b small{ display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--green-dark); }
+.studio-b h3{ font-size:22px; margin:2px 0 4px; }
+.studio-b span{ font-size:14px; color:var(--ink-soft); }
+.studio-b span i{ margin-right:6px; color:var(--green-dark); }
+@media (max-width:560px){ .studio .btn{ width:100%; } }
+
+/* staff messages */
+.card.req .reply{ background:var(--green-pale); border-radius:8px; padding:10px 12px; }
+.badge{ margin-left:auto; font-style:normal; background:#d9480f; color:#fff; font-size:11px; font-weight:700; min-width:20px; height:20px; padding:0 6px; border-radius:10px; display:inline-grid; place-items:center; }
+details > summary{ cursor:pointer; list-style:none; }
+
+
+/* ===== ROUND 2: coverage side, function dates rows, team counts ===== */
+.portal-body label.big{ font-size:14px; color:var(--green-dark); }
+.portal-body select.big{ font-size:20px; font-weight:700; padding:16px 14px; border-color:var(--green); background:var(--green-pale); }
+.sidebadge{ align-self:flex-start; display:inline-block; font-family:var(--font-display); font-size:21px; font-weight:700; line-height:1.2; padding:7px 16px; border-radius:22px; background:var(--green-dark); color:#fff; letter-spacing:.01em; }
+.funcs{ display:grid; gap:8px; margin-bottom:8px; }
+.frow{ display:grid; grid-template-columns:1.25fr 1.25fr 1fr auto; gap:6px; align-items:center; }
+.portal-body .frow input, .portal-body .frow select{ padding:10px 8px; font-size:13px; }
+.frow .lnk{ font-size:16px; color:#b3261e; padding:6px 8px; }
+.teamg{ display:grid; gap:8px; }
+.trow{ display:grid; grid-template-columns:1fr 90px; gap:10px; align-items:center; }
+.trow span{ font-size:14px; font-weight:600; }
+.portal-body .trow input{ text-align:center; font-weight:700; }
+@media (max-width:560px){ .frow{ grid-template-columns:1fr 1fr auto; } .frow input[type=date]{ grid-column:1 / -1; } }
+
+
+/* ===== ROUND 3: side field normal size, event-type checkboxes, share preview ===== */
+.portal-body label.big{ font-size:11.5px; }
+.portal-body select.big{ font-size:14px; padding:13px 14px; }
+.sidebadge{ font-family:var(--font-body); font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:6px 12px; border-radius:20px; }
+.checks.two{ grid-template-columns:1fr 1fr; max-height:none; }
+@media (max-width:420px){ .checks.two{ grid-template-columns:1fr; } }
+.sprev{ display:block; width:100%; min-height:140px; margin:14px 0 6px; border-radius:8px; border:1px solid var(--line); background:#0d0d0d; }
+
+
+/* Round 4 */
+/* ===== ADD THIS AT THE VERY END OF css/portal.css ===== */
+
+/* multi-line text (function dates, messages) */
+.pre{ white-space:pre-line; }
+.meta .wide, .kvs .wide{ grid-column:1 / -1; }
+
+/* fields that appear only for a chosen option (service = Other) */
+.dep[hidden]{ display:none; }
+
+/* checkbox list (staff -> projects they can see) */
+.checks{ display:grid; gap:8px; max-height:220px; overflow:auto; padding:2px; }
+.portal-body label.chk{ display:flex; align-items:flex-start; gap:10px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius); text-transform:none; letter-spacing:0; font-weight:500; font-size:13.5px; cursor:pointer; }
+.portal-body .chk input{ width:auto; margin-top:2px; padding:0; }
+.portal-body .chk:hover{ border-color:var(--green); }
+
+/* copy rows after creating a client / staff */
+.cred{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.cred small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a86; }
+.cred b{ font-size:18px; letter-spacing:.02em; word-break:break-all; }
+.modal .acts{ flex-wrap:wrap; }
+
+/* "Open" look on client delivery cards */
+.open-btn{ display:inline-block; margin-top:6px; padding:7px 14px; border-radius:20px; background:var(--green-pale); color:var(--green-dark) !important; font-weight:700 !important; }
+a.dcard:hover .open-btn{ background:var(--green); color:#fff !important; }
+.dcard.adm .row-actions .btn{ flex:1 1 auto; justify-content:center; }
+
+/* studio contact card (client portal) */
+.studio{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin:28px 0 0; padding:20px 22px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; }
+.studio-b{ flex:1 1 200px; min-width:0; }
+.studio-b small{ display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--green-dark); }
+.studio-b h3{ font-size:22px; margin:2px 0 4px; }
+.studio-b span{ font-size:14px; color:var(--ink-soft); }
+.studio-b span i{ margin-right:6px; color:var(--green-dark); }
+@media (max-width:560px){ .studio .btn{ width:100%; } }
+
+/* staff messages */
+.card.req .reply{ background:var(--green-pale); border-radius:8px; padding:10px 12px; }
+.badge{ margin-left:auto; font-style:normal; background:#d9480f; color:#fff; font-size:11px; font-weight:700; min-width:20px; height:20px; padding:0 6px; border-radius:10px; display:inline-grid; place-items:center; }
+details > summary{ cursor:pointer; list-style:none; }
+
+
+/* ===== ROUND 2: coverage side, function dates rows, team counts ===== */
+.portal-body label.big{ font-size:14px; color:var(--green-dark); }
+.portal-body select.big{ font-size:20px; font-weight:700; padding:16px 14px; border-color:var(--green); background:var(--green-pale); }
+.sidebadge{ align-self:flex-start; display:inline-block; font-family:var(--font-display); font-size:21px; font-weight:700; line-height:1.2; padding:7px 16px; border-radius:22px; background:var(--green-dark); color:#fff; letter-spacing:.01em; }
+.funcs{ display:grid; gap:8px; margin-bottom:8px; }
+.frow{ display:grid; grid-template-columns:1.25fr 1.25fr 1fr auto; gap:6px; align-items:center; }
+.portal-body .frow input, .portal-body .frow select{ padding:10px 8px; font-size:13px; }
+.frow .lnk{ font-size:16px; color:#b3261e; padding:6px 8px; }
+.teamg{ display:grid; gap:8px; }
+.trow{ display:grid; grid-template-columns:1fr 90px; gap:10px; align-items:center; }
+.trow span{ font-size:14px; font-weight:600; }
+.portal-body .trow input{ text-align:center; font-weight:700; }
+@media (max-width:560px){ .frow{ grid-template-columns:1fr 1fr auto; } .frow input[type=date]{ grid-column:1 / -1; } }
+
+
+/* ===== ROUND 3: side field normal size, event-type checkboxes, share preview ===== */
+.portal-body label.big{ font-size:11.5px; }
+.portal-body select.big{ font-size:14px; padding:13px 14px; }
+.sidebadge{ font-family:var(--font-body); font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:6px 12px; border-radius:20px; }
+.checks.two{ grid-template-columns:1fr 1fr; max-height:none; }
+@media (max-width:420px){ .checks.two{ grid-template-columns:1fr; } }
+.sprev{ display:block; width:100%; min-height:140px; margin:14px 0 6px; border-radius:8px; border:1px solid var(--line); background:#0d0d0d; }
+
+
+/* ===== ROUND 4: per-event time, coverage hours and details ===== */
+.evd{ display:grid; gap:12px; }
+.evb{ border:1px solid var(--line); border-left:3px solid var(--green); border-radius:8px; padding:12px 14px; background:#fafaf8; }
+.evb h4{ font-family:var(--font-display); font-size:17px; margin:0 0 10px; color:var(--black); }
+.evb-g{ display:grid; grid-template-columns:1.6fr 1fr; gap:10px; margin-bottom:10px; }
+.evb-g small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:5px; }
+.portal-body .evb textarea{ font-size:13.5px; }
+@media (max-width:480px){ .evb-g{ grid-template-columns:1fr; } }
+
+/* Round -5 */
+
+/* ===== ADD THIS AT THE VERY END OF css/portal.css ===== */
+
+/* multi-line text (function dates, messages) */
+.pre{ white-space:pre-line; }
+.meta .wide, .kvs .wide{ grid-column:1 / -1; }
+
+/* fields that appear only for a chosen option (service = Other) */
+.dep[hidden]{ display:none; }
+
+/* checkbox list (staff -> projects they can see) */
+.checks{ display:grid; gap:8px; max-height:220px; overflow:auto; padding:2px; }
+.portal-body label.chk{ display:flex; align-items:flex-start; gap:10px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius); text-transform:none; letter-spacing:0; font-weight:500; font-size:13.5px; cursor:pointer; }
+.portal-body .chk input{ width:auto; margin-top:2px; padding:0; }
+.portal-body .chk:hover{ border-color:var(--green); }
+
+/* copy rows after creating a client / staff */
+.cred{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.cred small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a86; }
+.cred b{ font-size:18px; letter-spacing:.02em; word-break:break-all; }
+.modal .acts{ flex-wrap:wrap; }
+
+/* "Open" look on client delivery cards */
+.open-btn{ display:inline-block; margin-top:6px; padding:7px 14px; border-radius:20px; background:var(--green-pale); color:var(--green-dark) !important; font-weight:700 !important; }
+a.dcard:hover .open-btn{ background:var(--green); color:#fff !important; }
+.dcard.adm .row-actions .btn{ flex:1 1 auto; justify-content:center; }
+
+/* studio contact card (client portal) */
+.studio{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin:28px 0 0; padding:20px 22px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; }
+.studio-b{ flex:1 1 200px; min-width:0; }
+.studio-b small{ display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--green-dark); }
+.studio-b h3{ font-size:22px; margin:2px 0 4px; }
+.studio-b span{ font-size:14px; color:var(--ink-soft); }
+.studio-b span i{ margin-right:6px; color:var(--green-dark); }
+@media (max-width:560px){ .studio .btn{ width:100%; } }
+
+/* staff messages */
+.card.req .reply{ background:var(--green-pale); border-radius:8px; padding:10px 12px; }
+.badge{ margin-left:auto; font-style:normal; background:#d9480f; color:#fff; font-size:11px; font-weight:700; min-width:20px; height:20px; padding:0 6px; border-radius:10px; display:inline-grid; place-items:center; }
+details > summary{ cursor:pointer; list-style:none; }
+
+
+/* ===== ROUND 2: coverage side, function dates rows, team counts ===== */
+.portal-body label.big{ font-size:14px; color:var(--green-dark); }
+.portal-body select.big{ font-size:20px; font-weight:700; padding:16px 14px; border-color:var(--green); background:var(--green-pale); }
+.sidebadge{ align-self:flex-start; display:inline-block; font-family:var(--font-display); font-size:21px; font-weight:700; line-height:1.2; padding:7px 16px; border-radius:22px; background:var(--green-dark); color:#fff; letter-spacing:.01em; }
+.funcs{ display:grid; gap:8px; margin-bottom:8px; }
+.frow{ display:grid; grid-template-columns:1.25fr 1.25fr 1fr auto; gap:6px; align-items:center; }
+.portal-body .frow input, .portal-body .frow select{ padding:10px 8px; font-size:13px; }
+.frow .lnk{ font-size:16px; color:#b3261e; padding:6px 8px; }
+.teamg{ display:grid; gap:8px; }
+.trow{ display:grid; grid-template-columns:1fr 90px; gap:10px; align-items:center; }
+.trow span{ font-size:14px; font-weight:600; }
+.portal-body .trow input{ text-align:center; font-weight:700; }
+@media (max-width:560px){ .frow{ grid-template-columns:1fr 1fr auto; } .frow input[type=date]{ grid-column:1 / -1; } }
+
+
+/* ===== ROUND 3: side field normal size, event-type checkboxes, share preview ===== */
+.portal-body label.big{ font-size:11.5px; }
+.portal-body select.big{ font-size:14px; padding:13px 14px; }
+.sidebadge{ font-family:var(--font-body); font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:6px 12px; border-radius:20px; }
+.checks.two{ grid-template-columns:1fr 1fr; max-height:none; }
+@media (max-width:420px){ .checks.two{ grid-template-columns:1fr; } }
+.sprev{ display:block; width:100%; min-height:140px; margin:14px 0 6px; border-radius:8px; border:1px solid var(--line); background:#0d0d0d; }
+
+
+/* ===== ROUND 4: per-event time, coverage hours and details ===== */
+.evd{ display:grid; gap:12px; }
+.evb{ border:1px solid var(--line); border-left:3px solid var(--green); border-radius:8px; padding:12px 14px; background:#fafaf8; }
+.evb h4{ font-family:var(--font-display); font-size:17px; margin:0 0 10px; color:var(--black); }
+.evb-g{ display:grid; grid-template-columns:1.6fr 1fr; gap:10px; margin-bottom:10px; }
+.evb-g small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:5px; }
+.portal-body .evb textarea{ font-size:13.5px; }
+@media (max-width:480px){ .evb-g{ grid-template-columns:1fr; } }
+
+
+/* ===== ROUND 5: multi-owner project picker ===== */
+.chk[hidden]{ display:none !important; }
+.portal-body .chk-search{ margin-bottom:8px; height:40px; padding:0 12px; font-size:13.5px; }
+
+
+/* ===== ADD THIS AT THE VERY END OF css/portal.css ===== */
+
+/* multi-line text (function dates, messages) */
+.pre{ white-space:pre-line; }
+.meta .wide, .kvs .wide{ grid-column:1 / -1; }
+
+/* fields that appear only for a chosen option (service = Other) */
+.dep[hidden]{ display:none; }
+
+/* checkbox list (staff -> projects they can see) */
+.checks{ display:grid; gap:8px; max-height:220px; overflow:auto; padding:2px; }
+.portal-body label.chk{ display:flex; align-items:flex-start; gap:10px; margin:0; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius); text-transform:none; letter-spacing:0; font-weight:500; font-size:13.5px; cursor:pointer; }
+.portal-body .chk input{ width:auto; margin-top:2px; padding:0; }
+.portal-body .chk:hover{ border-color:var(--green); }
+
+/* copy rows after creating a client / staff */
+.cred{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; margin-top:12px; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+.cred small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#8a8a86; }
+.cred b{ font-size:18px; letter-spacing:.02em; word-break:break-all; }
+.modal .acts{ flex-wrap:wrap; }
+
+/* "Open" look on client delivery cards */
+.open-btn{ display:inline-block; margin-top:6px; padding:7px 14px; border-radius:20px; background:var(--green-pale); color:var(--green-dark) !important; font-weight:700 !important; }
+a.dcard:hover .open-btn{ background:var(--green); color:#fff !important; }
+.dcard.adm .row-actions .btn{ flex:1 1 auto; justify-content:center; }
+
+/* studio contact card (client portal) */
+.studio{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin:28px 0 0; padding:20px 22px; background:#fff; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:12px; }
+.studio-b{ flex:1 1 200px; min-width:0; }
+.studio-b small{ display:block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--green-dark); }
+.studio-b h3{ font-size:22px; margin:2px 0 4px; }
+.studio-b span{ font-size:14px; color:var(--ink-soft); }
+.studio-b span i{ margin-right:6px; color:var(--green-dark); }
+@media (max-width:560px){ .studio .btn{ width:100%; } }
+
+/* staff messages */
+.card.req .reply{ background:var(--green-pale); border-radius:8px; padding:10px 12px; }
+.badge{ margin-left:auto; font-style:normal; background:#d9480f; color:#fff; font-size:11px; font-weight:700; min-width:20px; height:20px; padding:0 6px; border-radius:10px; display:inline-grid; place-items:center; }
+details > summary{ cursor:pointer; list-style:none; }
+
+
+/* ===== ROUND 2: coverage side, function dates rows, team counts ===== */
+.portal-body label.big{ font-size:14px; color:var(--green-dark); }
+.portal-body select.big{ font-size:20px; font-weight:700; padding:16px 14px; border-color:var(--green); background:var(--green-pale); }
+.sidebadge{ align-self:flex-start; display:inline-block; font-family:var(--font-display); font-size:21px; font-weight:700; line-height:1.2; padding:7px 16px; border-radius:22px; background:var(--green-dark); color:#fff; letter-spacing:.01em; }
+.funcs{ display:grid; gap:8px; margin-bottom:8px; }
+.frow{ display:grid; grid-template-columns:1.25fr 1.25fr 1fr auto; gap:6px; align-items:center; }
+.portal-body .frow input, .portal-body .frow select{ padding:10px 8px; font-size:13px; }
+.frow .lnk{ font-size:16px; color:#b3261e; padding:6px 8px; }
+.teamg{ display:grid; gap:8px; }
+.trow{ display:grid; grid-template-columns:1fr 90px; gap:10px; align-items:center; }
+.trow span{ font-size:14px; font-weight:600; }
+.portal-body .trow input{ text-align:center; font-weight:700; }
+@media (max-width:560px){ .frow{ grid-template-columns:1fr 1fr auto; } .frow input[type=date]{ grid-column:1 / -1; } }
+
+
+/* ===== ROUND 3: side field normal size, event-type checkboxes, share preview ===== */
+.portal-body label.big{ font-size:11.5px; }
+.portal-body select.big{ font-size:14px; padding:13px 14px; }
+.sidebadge{ font-family:var(--font-body); font-size:11px; letter-spacing:.1em; text-transform:uppercase; padding:6px 12px; border-radius:20px; }
+.checks.two{ grid-template-columns:1fr 1fr; max-height:none; }
+@media (max-width:420px){ .checks.two{ grid-template-columns:1fr; } }
+.sprev{ display:block; width:100%; min-height:140px; margin:14px 0 6px; border-radius:8px; border:1px solid var(--line); background:#0d0d0d; }
+
+
+/* ===== ROUND 4: per-event time, coverage hours and details ===== */
+.evd{ display:grid; gap:12px; }
+.evb{ border:1px solid var(--line); border-left:3px solid var(--green); border-radius:8px; padding:12px 14px; background:#fafaf8; }
+.evb h4{ font-family:var(--font-display); font-size:17px; margin:0 0 10px; color:var(--black); }
+.evb-g{ display:grid; grid-template-columns:1.6fr 1fr; gap:10px; margin-bottom:10px; }
+.evb-g small{ display:block; font-size:10.5px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:5px; }
+.portal-body .evb textarea{ font-size:13.5px; }
+@media (max-width:480px){ .evb-g{ grid-template-columns:1fr; } }
+
+
+/* ===== ROUND 5: multi-owner project picker ===== */
+.chk[hidden]{ display:none !important; }
+.portal-body .chk-search{ margin-bottom:8px; height:40px; padding:0 12px; font-size:13.5px; }
+
+
+/* ===== ROUND 6: payment terms (project form + live tracker) ===== */
+.terms{ display:grid; gap:8px; margin-bottom:8px; }
+.trw{ display:grid; grid-template-columns:1.4fr 1.1fr 1fr auto; gap:6px; align-items:center; }
+.portal-body .trw input{ padding:10px 8px; font-size:13px; }
+.trw .lnk{ font-size:16px; color:#b3261e; padding:6px 8px; }
+@media (max-width:560px){ .trw{ grid-template-columns:1fr 1fr auto; } .trw input:first-child{ grid-column:1 / -1; } }
+
+.terms-btn{ display:block; width:100%; text-align:left; cursor:pointer; font:inherit; padding:14px 16px; background:#fff; border:1px solid var(--line); border-radius:12px; transition:border-color .3s var(--ease), box-shadow .3s var(--ease), transform .3s var(--ease); }
+.terms-btn:hover{ border-color:var(--green); box-shadow:0 10px 24px rgba(0,0,0,.07); transform:translateY(-2px); }
+.tb-h{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.tb-h b{ font-size:13px; color:var(--black); }
+.tb-h span{ font-size:12px; font-weight:700; color:var(--green-dark); }
+.tb-seg{ display:flex; gap:4px; margin:10px 0 8px; }
+.tb-seg i{ flex:1; height:7px; border-radius:6px; background:#e3eadf; }
+.tb-seg i.paid{ background:#2f9e44; }
+.tb-seg i.partial{ background:linear-gradient(90deg,#2f9e44 50%,#e3eadf 50%); }
+.tb-seg i.overdue{ background:#d9480f; }
+.tb-n{ font-size:12.5px; color:var(--ink-soft); }
+.tb-n.ok{ color:#2f9e44; font-weight:700; }
+
+.tnext{ display:flex; gap:12px; align-items:flex-start; margin:16px 0 4px; padding:12px 14px; border-radius:10px; background:var(--green-pale); }
+.tnext > i{ font-size:18px; color:var(--green-dark); margin-top:2px; }
+.tnext b{ display:block; font-size:14px; color:var(--black); }
+.tnext span{ font-size:13px; color:var(--ink-soft); }
+.tnext.bad{ background:#fdeceb; } .tnext.bad > i{ color:#b3261e; }
+.tnext.done{ background:#e8f6ec; } .tnext.done > i{ color:#2f9e44; }
+
+.tl{ position:relative; display:grid; margin:20px 0 6px; }
+.tl-i{ position:relative; display:flex; gap:14px; padding-bottom:22px; }
+.tl-i:last-child{ padding-bottom:0; }
+.tl-i::before{ content:""; position:absolute; left:15px; top:32px; bottom:0; width:2px; background:#e3eadf; }
+.tl-i:last-child::before{ display:none; }
+.tl-i.paid::before{ background:#2f9e44; }
+.tl-dot{ position:relative; z-index:1; width:32px; height:32px; flex-shrink:0; display:grid; place-items:center; border-radius:50%; background:#fff; border:2px solid #cfd8cb; color:var(--ink-soft); font-size:13px; font-weight:700; }
+.tl-i.paid .tl-dot{ background:#2f9e44; border-color:#2f9e44; color:#fff; }
+.tl-i.partial .tl-dot{ border-color:#2f9e44; color:#2f9e44; }
+.tl-i.overdue .tl-dot{ background:#d9480f; border-color:#d9480f; color:#fff; }
+.tl-i.now .tl-dot{ animation:tlPulse 1.8s infinite; }
+.tl-i.now.overdue .tl-dot{ animation-name:tlPulseR; }
+@keyframes tlPulse{ 0%{ box-shadow:0 0 0 0 rgba(47,158,68,.5);} 70%{ box-shadow:0 0 0 12px rgba(47,158,68,0);} 100%{ box-shadow:0 0 0 0 rgba(47,158,68,0);} }
+@keyframes tlPulseR{ 0%{ box-shadow:0 0 0 0 rgba(217,72,15,.5);} 70%{ box-shadow:0 0 0 12px rgba(217,72,15,0);} 100%{ box-shadow:0 0 0 0 rgba(217,72,15,0);} }
+.tl-b{ flex:1; min-width:0; padding-top:2px; }
+.tl-h{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.tl-h b{ font-size:15px; color:var(--black); }
+.tl-m{ margin-top:4px; font-size:13px; color:var(--ink-soft); }
+.tl-m b{ color:var(--black); }
+.tl-m em{ font-style:normal; font-weight:600; color:var(--green-dark); }
+.tl-i.overdue .tl-m em{ color:#b3261e; }
+.tl-sub{ margin-top:3px; font-size:12.5px; color:#a35f00; font-weight:600; }
