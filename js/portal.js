@@ -1,10 +1,11 @@
 /* =========================================================
    SHUBHAM PRODUCTION — Client, Staff & Admin Portal (login.html)
    login screen -> client portal / staff portal / admin dashboard
+   v2: completed events, staff project-wise payments, activity log
    ========================================================= */
 import {initializeApp,deleteApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {getAuth,onAuthStateChanged,signInWithEmailAndPassword,createUserWithEmailAndPassword,signOut,updatePassword,deleteUser,GoogleAuthProvider,linkWithPopup,reauthenticateWithPopup,setPersistence,browserSessionPersistence,browserLocalPersistence} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,collection,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,query,where,writeBatch} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import {getFirestore,collection,doc,getDoc,setDoc,addDoc,updateDoc,deleteDoc,onSnapshot,query,where,writeBatch,orderBy,limit,arrayUnion,arrayRemove,deleteField} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* ====== Firebase config ====== */
 const firebaseConfig={apiKey:"AIzaSyDKAU2yXKvGUV6EvO1xrPp2MGP_IpUkYqo",authDomain:"shubhamproduction-540e8.firebaseapp.com",projectId:"shubhamproduction-540e8",storageBucket:"shubhamproduction-540e8.firebasestorage.app",messagingSenderId:"84744399932",appId:"1:84744399932:web:d05e6a0367d2b35d9f6739"};
@@ -35,7 +36,7 @@ const copyText=(t,msg)=>(navigator.clipboard?navigator.clipboard.writeText(Strin
 const waLink=(num,text)=>{const d=String(num||'').replace(/\D/g,'');return 'https://wa.me/'+(d.length===10?'91'+d:d)+(text?'?text='+encodeURIComponent(text):'')};
 
 let me=null,view='home',mode='login',month='',idleT,unsubs=[],setupDone=true,signingUp=false,authErr='',navOpen=false,q='',sid=null,draft='',syncT;
-const blank=()=>({clients:[],projects:[],events:[],deliveries:[],staff:[],reqs:[],secrets:{},ssecrets:{},notes:{},self:null,studio:null});
+const blank=()=>({clients:[],projects:[],events:[],deliveries:[],staff:[],reqs:[],staffPay:[],spAmt:{},activity:[],secrets:{},ssecrets:{},notes:{},self:null,studio:null});
 let db=blank();
 const cname=id=>(db.clients.find(c=>c.id===id)||{}).name||'—';
 const pay=p=>{const t=+p.amount||0,pd=(p.payments||[]).reduce((a,x)=>a+(+x.amount||0),0);return{total:t,paid:pd,due:Math.max(0,t-pd)}};
@@ -44,6 +45,7 @@ const nice=e=>/invalid-credential|wrong-password|user-not-found/.test(e.code||''
 /* ---------- 12-hour time helpers ---------- */
 const fmt12=t=>{if(!t)return'';const[h,m]=String(t).split(':').map(Number);if(isNaN(h))return'';return(h%12||12)+':'+String(m||0).padStart(2,'0')+' '+(h<12?'AM':'PM')};
 const fmtDay=d=>d?new Date(d+'T00:00').toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}):'No date';
+const fmtAt=t=>t?new Date(t).toLocaleString('en-IN',{day:'numeric',month:'short',year:'numeric',hour:'numeric',minute:'2-digit',hour12:true}):'';
 const t12wire=w=>{w.onchange=()=>{const[h,mi,a]=[...w.querySelectorAll('select')].map(s=>s.value);w.querySelector('input').value=h?String(+h%12+(a==='PM'?12:0)).padStart(2,'0')+':'+mi:''}};
 const t12Html=(k,v)=>{let h='',mi='00',a='AM';
   if(v){const[H,M]=String(v).split(':').map(Number);h=String(H%12||12);mi=String(M||0).padStart(2,'0');a=H<12?'AM':'PM'}
@@ -89,6 +91,9 @@ function adminListen(full){
   listen(collection(fs,'staff'),s=>{db.staff=mapDocs(s);queueSync()});
   if(!full)listen(collection(fs,'staffSecrets'),s=>{db.ssecrets={};s.docs.forEach(d=>{db.ssecrets[d.id]=d.data().pw;db.notes[d.id]=d.data().note||''})});
   listen(collection(fs,'staffRequests'),s=>db.reqs=mapDocs(s));
+  listen(collection(fs,'staffPay'),s=>{db.staffPay=mapDocs(s);queueMig()});
+  listen(collection(fs,'staffPayAmt'),s=>{db.spAmt={};s.docs.forEach(x=>db.spAmt[x.id]=+x.data().total||0);queueMig()});
+  listen(query(collection(fs,'activity'),orderBy('at','desc'),limit(400)),s=>db.activity=mapDocs(s));
   listen(doc(fs,'config','studio'),s=>db.studio=s.data()||null);
 }
 const listenTwo=(name,key,uid,f1,f2)=>{const r={a:[],b:[]},set=()=>{const m=new Map();[...r.a,...r.b].forEach(x=>m.set(x.id,x));db[key]=[...m.values()]};
@@ -112,6 +117,7 @@ async function enter(u){
     listen(doc(fs,'staff',u.uid),s=>{db.self=s.data();if((s.data()||{}).access==='full')reenter()});
     listen(query(collection(fs,'events'),where('staffIds','array-contains',u.uid)),s=>db.events=mapDocs(s));
     listen(query(collection(fs,'staffRequests'),where('staffId','==',u.uid)),s=>db.reqs=mapDocs(s));
+    listen(query(collection(fs,'staffPay'),where('staffId','==',u.uid)),s=>db.staffPay=mapDocs(s));
   }else{
     const c=await getDoc(doc(fs,'clients',u.uid));
     if(!c.exists()){authErr='This account is not linked to the portal.';return signOut(auth)}
@@ -140,7 +146,10 @@ const coordOf=e=>[e.coordName,e.coordPhone].filter(Boolean).join(' · ');
 const todayS=()=>new Date().toLocaleDateString('en-CA');
 let cid=null;
 const evSort=(a,b)=>((a.date||'')+(a.time||'')).localeCompare((b.date||'')+(b.time||''));
+/* an event is COMPLETED when it is marked Success, or its date has passed (cancelled events are never "completed") */
+const isDone=e=>e.status!=='Cancelled'&&(e.status==='Success'||(!!e.date&&e.date<todayS()));
 const pname=id=>(db.projects.find(p=>p.id===id)||{}).title||'—';
+const sname=id=>(db.staff.find(s=>s.id===id)||{}).name||'—';
 const tot=ps=>ps.reduce((a,p)=>{const x=pay(p);a.total+=x.total;a.paid+=x.paid;a.due+=x.due;return a},{total:0,paid:0,due:0});
 const ico=(n,b)=>`<i class="fa-${b||'solid'} fa-${n}" aria-hidden="true"></i>`;
 const pill=(t,c)=>`<span class="pill ${c||''}">${esc(t)}</span>`;
@@ -148,24 +157,27 @@ const stPill=s=>pill(s,{Ongoing:'warn',Pending:'warn',Confirmed:'ok',Success:'da
 const btn=(a,id,t,ic)=>`<button class="btn sm outline" data-${a}="${id}">${ic?ico(ic)+' ':''}${t}</button>`;
 const kv=(k,v)=>v?`<div><small>${k}</small><span>${esc(v)}</span></div>`:'';
 const kvl=(k,v)=>v?`<div class="wide"><small>${k}</small><span class="pre">${esc(v)}</span></div>`:'';
-const stat=(l,v,d,ic)=>`<div class="kpi ${d?'dark':''}">${ic?`<i class="fa-solid fa-${ic} kpi-ic" aria-hidden="true"></i>`:''}<small>${l}</small><b>${v}</b></div>`;
+const stat=(l,v,d,ic,k)=>{const inner=`${ic?`<i class="fa-solid fa-${ic} kpi-ic" aria-hidden="true"></i>`:''}<small>${l}</small><b>${v}</b>${k?`<em class="kpi-go">View details ${ico('arrow-right')}</em>`:''}`;return k?`<button type="button" class="kpi click ${d?'dark':''}" data-kpi="${esc(k)}">${inner}</button>`:`<div class="kpi ${d?'dark':''}">${inner}</div>`};
 const mLabel=m=>{const[y,mo]=m.split('-');return new Date(+y,+mo-1,1).toLocaleString('en-IN',{month:'short',year:'2-digit'})};
-const bars=rows=>{const m=Math.max(1,...rows.map(r=>r[1]));return rows.map(r=>`<div class="bar-row"><span>${esc(r[0])}</span><div class="track"><i style="width:${r[1]/m*100}%"></i></div><b>${r[1]}</b></div>`).join('')};
+const bars=(rows,kind)=>{const m=Math.max(1,...rows.map(r=>r[1]));return rows.map(r=>{const inner=`<span>${esc(r[0])}</span><div class="track"><i style="width:${r[1]/m*100}%"></i></div><b>${r[1]}</b>`;return kind?`<button type="button" class="bar-row clickable" data-bar="${kind}|${esc(r[2]??r[0])}">${inner}</button>`:`<div class="bar-row">${inner}</div>`}).join('')};
 const empty=(t,ic)=>`<div class="empty">${ico(ic||'folder-open')}<p>${t}</p></div>`;
 const cards=(a,fn,msg,ic)=>a.length?`<div class="cards">${a.map(fn).join('')}</div>`:empty(msg,ic);
 const heading=(t,act)=>`<div class="sec-h"><h3>${t}</h3>${act||''}</div>`;
 const initial=n=>esc(String(n||'?').trim().slice(0,1).toUpperCase());
 const av=(n,ph,cls)=>`<span class="avatar ${cls||''}">${ph?`<img src="${esc(ph)}" alt="">`:initial(n)}</span>`;
 const projCard=(p,adm)=>{const x=pay(p),pc=x.total?Math.min(100,Math.round(x.paid/x.total*100)):0;
-  return`<article class="card">${p.side?`<div class="sidebadge">${esc(p.side)}</div>`:''}<div class="card-h"><div><h3>${esc(p.title)}</h3><small>${adm?esc(ownerNames(p))+' · ':''}${esc(p.service)}</small></div>${stPill(p.status)}</div>${p.details?`<p>${esc(p.details)}</p>`:''}<div class="meta">${kvl('Function dates',p.funcDates)}${kv('Start',p.startDate)}${kv('Delivery by',p.deliveryDate)}${kv('Deliverables',p.deliverables)}</div><div class="prog paybox ${x.due?'':'is-clear'}"><div class="pay-grid"><div><small>Total</small><b>${inr(x.total)}</b></div><div class="pg"><small>Received</small><b>${inr(x.paid)}</b></div><div class="pd"><small>Pending</small><b>${inr(x.due)}</b></div></div><div class="track"><i style="width:${pc}%"></i></div><div class="pay-state">${x.due?`${pc}% paid`:`${ico('circle-check')} Fully paid`}</div></div>${termsBlock(p)}${adm?`<div class="row-actions">${btn('pp',p.id,'Add payment','plus')}${(p.payments||[]).length?btn('pu',p.id,'Undo last payment','rotate-left'):''}${btn('pe',p.id,'Edit','pen')}${btn('pd',p.id,'Delete','trash')}</div>`:''}</article>`};
+  return`<article class="card">${p.side?`<div class="sidebadge">${esc(p.side)}</div>`:''}<div class="card-h"><div><h3>${esc(p.title)}</h3><small>${adm?esc(ownerNames(p))+' · ':''}${esc(p.service)}</small></div>${stPill(p.status)}</div>${p.details?`<p>${esc(p.details)}</p>`:''}<div class="meta">${kvl('Function dates',p.funcDates)}${kv('Start',p.startDate)}${kv('Delivery by',p.deliveryDate)}${kv('Deliverables',p.deliverables)}</div><div class="prog paybox ${x.due?'':'is-clear'}"><div class="pay-grid"><div><small>Total</small><b>${inr(x.total)}</b></div><div class="pg"><small>Received</small><b>${inr(x.paid)}</b></div><div class="pd"><small>Pending</small><b>${inr(x.due)}</b></div></div><div class="track"><i style="width:${pc}%"></i></div><div class="pay-state">${x.due?`${pc}% paid`:`${ico('circle-check')} Fully paid`}</div></div>${termsBlock(p)}${adm?`<div class="row-actions">${btn('pp',p.id,'Add payment','plus')}${btn('pcm',p.id,'Staff cost','wallet')}${(p.payments||[]).length?btn('pu',p.id,'Undo last payment','rotate-left'):''}${btn('pe',p.id,'Edit','pen')}${btn('pd',p.id,'Delete','trash')}</div>`:''}</article>`};
 /* m: 0 = client view, 1 = admin, 2 = staff (no prices, no client contact) */
-const evCard=(e,m)=>{const d=e.date?new Date(e.date+'T00:00'):null;
+const evCard=(e,m)=>{const d=e.date?new Date(e.date+'T00:00'):null,dn=isDone(e);
   const sub=m===1?esc(e.clientName||cname(e.clientId))+' · '+esc(e.projectTitle||pname(e.projectId)):m===2?esc(e.clientName||'')+' · '+esc(e.projectTitle||''):esc(pname(e.projectId));
-  return`<article class="card ev"><div class="date">${d?`<b>${d.getDate()}</b><span>${d.toLocaleString('en-IN',{month:'short'})}</span>`:''}</div><div class="ev-b">${e.side?`<div class="sidebadge">${esc(e.side)}</div>`:''}<div class="card-h"><div><h3>${esc(e.type)}</h3><small>${sub}</small></div>${stPill(e.status)}</div><div class="meta">${e.evDetails&&e.evDetails.length?kvl('Schedule',schedText(e)):kv('Time',[fmt12(e.time),fmt12(e.endTime)].filter(Boolean).join(' – '))}${kv('Venue',e.place)}${kvl('Team',e.team)}${kv('Team members',e.teamNames)}${kv('Coordinator',coordOf(e))}${kv('On-site contact',e.contact)}</div>${e.notes?`<p>${esc(e.notes)}</p>`:''}${m===1?`<div class="row-actions">${btn('es',e.id,'Share','share-nodes')}${btn('ee',e.id,'Edit','pen')}${btn('ed',e.id,'Delete','trash')}</div>`:''}</div></article>`};
-const payLog=ps=>{const r=ps.flatMap(p=>(p.payments||[]).map(x=>({...x,p:p.title}))).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
-  return r.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Project</th><th>Amount</th><th>Mode</th><th>Note</th></tr></thead><tbody>${r.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.p)}</td><td><b>${inr(x.amount)}</b></td><td>${esc(x.mode)}</td><td>${esc(x.note)}</td></tr>`).join('')}</tbody></table></div>`:empty('No payments recorded yet.','receipt')};
+  return`<article class="card ev ${dn?'done':''}"><div class="date">${d?`<b>${d.getDate()}</b><span>${d.toLocaleString('en-IN',{month:'short'})}</span>`:''}</div><div class="ev-b">${e.side?`<div class="sidebadge">${esc(e.side)}</div>`:''}<div class="card-h"><div><h3>${esc(e.type)}</h3><small>${sub}</small></div>${dn?`<span class="pill ok done-pill">${ico('circle-check')} Completed</span>`:stPill(e.status)}</div><div class="meta">${e.evDetails&&e.evDetails.length?kvl('Schedule',schedText(e)):kv('Time',[fmt12(e.time),fmt12(e.endTime)].filter(Boolean).join(' – '))}${kv('Venue',e.place)}${kvl('Team',e.team)}${kv('Team members',e.teamNames)}${kv('Coordinator',coordOf(e))}${kv('On-site contact',e.contact)}</div>${e.notes?`<p>${esc(e.notes)}</p>`:''}${m===1?`<div class="row-actions">${btn('es',e.id,'Share','share-nodes')}${btn('ee',e.id,'Edit','pen')}${btn('ed',e.id,'Delete','trash')}</div>`:''}</div></article>`};
+const payLog=(ps,adm)=>{const r=ps.flatMap(p=>(p.payments||[]).map(x=>({...x,p:p.title}))).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  return r.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Project</th><th>Amount</th><th>Mode</th><th>Note</th>${adm?'<th>Recorded by</th>':''}</tr></thead><tbody>${r.map(x=>`<tr><td>${esc(x.date)}</td><td>${esc(x.p)}</td><td><b>${inr(x.amount)}</b></td><td>${esc(x.mode)}</td><td>${esc(x.note)}</td>${adm?`<td>${x.by?`${esc(x.by)}<br><small>${fmtAt(x.at)}</small>`:'—'}</td>`:''}</tr>`).join('')}</tbody></table></div>`:empty('No payments recorded yet.','receipt')};
 const groupByDate=l=>{const g=[];l.forEach(e=>{const k=e.date||'',last=g[g.length-1];if(last&&last.d===k)last.a.push(e);else g.push({d:k,a:[e]})});return g};
 const evGroups=(l,m)=>groupByDate(l).map(x=>`<div class="day-h"><b>${esc(fmtDay(x.d))}</b><span>${x.a.length} event${x.a.length===1?'':'s'}</span></div><div class="cards">${x.a.map(e=>evCard(e,m)).join('')}</div>`).join('');
+/* upcoming / running events first, COMPLETED events always at the very bottom (light-green cards) */
+const evSplit=(l,m)=>{const a=l.filter(e=>!isDone(e)),d=l.filter(isDone).sort((x,y)=>evSort(y,x));
+  return(a.length?evGroups(a,m):'')+(d.length?`<div class="done-h">${ico('circle-check')}<h3>Completed events</h3><span>${d.length}</span></div>${evGroups(d,m)}`:'')};
 
 /* ---------- delivery cards ---------- */
 const DL_SUGG=['Pre-wedding','Wedding','Haldi','Mehendi','Sangeet','Engagement','Reception','Cinematic film','Reels','Album'];
@@ -230,7 +242,7 @@ function authView(){
 
 /* ---------- modal helpers ---------- */
 function popup(title,body,acts){
-  const m=$('#modal');m.hidden=false;m.dataset.term='';document.body.classList.add('modal-open');
+  const m=$('#modal');m.hidden=false;m.dataset.term='';m.dataset.sp='';m.dataset.pj='';document.body.classList.add('modal-open');
   const close=()=>{m.hidden=true;document.body.classList.remove('modal-open')};
   m.innerHTML=`<div class="modal-card"><div class="modal-h"><h3>${title}</h3><button type="button" class="x" id="cx" aria-label="Close">${ico('xmark')}</button></div><div class="modal-b">${body}</div><div class="acts">${acts}</div></div>`;
   $('#cx').onclick=close;m.onclick=e=>{if(e.target===m)close()};m.onkeydown=e=>{if(e.key==='Escape')close()};
@@ -252,7 +264,7 @@ const fieldHtml=(f,vals)=>{const v=vals[f.k];let h=`<label class="${f.big?'big':
   else h+=`<input name="${f.k}" type="${f.t||'text'}" value="${esc(v)}" ${f.r?'required':''} ${f.ro?'readonly':''} ${f.dl?`list="dl_${f.k}"`:''}>${f.dl?`<datalist id="dl_${f.k}">${f.dl.map(x=>`<option value="${esc(x)}">`).join('')}</datalist>`:''}`;
   return f.dep?`<div class="dep" data-k="${f.dep[0]}" data-v="${esc(f.dep[1])}" ${String(vals[f.dep[0]]??'')===f.dep[1]?'':'hidden'}>${h}</div>`:h};
 function form(title,fields,vals,onSave){
-  const m=$('#modal');m.hidden=false;m.dataset.term='';document.body.classList.add('modal-open');
+  const m=$('#modal');m.hidden=false;m.dataset.term='';m.dataset.sp='';m.dataset.pj='';document.body.classList.add('modal-open');
   const close=()=>{m.hidden=true;document.body.classList.remove('modal-open')};
   m.innerHTML=`<form class="modal-card"><div class="modal-h"><h3>${title}</h3><button type="button" class="x" id="cx" aria-label="Close">${ico('xmark')}</button></div><div class="modal-b">${fields.map(f=>fieldHtml(f,vals)).join('')}</div><div class="acts"><button type="button" class="btn outline" id="cx2">Cancel</button><button class="btn btn-gold">Save</button></div></form>`;
   $('#cx').onclick=$('#cx2').onclick=close;
@@ -298,6 +310,13 @@ function credsModal(title,name,phone,pw,alt,staff){
   $('#cwa').onclick=()=>shareLogin({name,phone,altPhone:alt},pw,staff);$('#cdone').onclick=close;
 }
 
+/* ---------- activity log (who did what, and when) ---------- */
+const roleLabel=()=>me.role==='staff'?'Staff':(me.full?'Full access':'Admin');
+const logAct=(text,x={})=>me?addDoc(collection(fs,'activity'),{at:Date.now(),by:me.uid,byName:me.name,role:roleLabel(),text,...x}).catch(()=>{}):0;
+const actRow=a=>`<div class="act-i"><span class="act-dot ${a.role==='Staff'?'st':'ad'}"></span><div><p>${esc(a.text)}</p><small><b>${esc(a.byName)}</b> · ${esc(a.role)} · ${fmtAt(a.at)}</small></div></div>`;
+const actList=(n,f)=>{const l=[...db.activity].filter(f||(()=>true)).sort((a,b)=>(b.at||0)-(a.at||0)).slice(0,n);return l.length?`<div class="act">${l.map(actRow).join('')}</div>`:empty('No activity recorded yet.','clock-rotate-left')};
+const actPanel=n=>heading('Recent activity',db.activity.length>n?`<button class="btn sm outline" data-go="activity">View all</button>`:'')+`<div class="panel">${actList(n)}</div>`;
+
 /* ---------- admin actions ---------- */
 const projF=v=>{const dv=[...DELV];if(v&&v.deliverables&&!dv.includes(v.deliverables))dv.push(v.deliverables);
   return[{k:'side',l:'Coverage side (team by / coverage from)',t:'select',o:SIDES.map(x=>[x,x]),big:1},{k:'title',l:'Project name',r:1},{k:'ownerIds',l:'Project owners — tick one or more clients',t:'checks',o:db.clients.map(c=>[c.id,c.name+(c.phone?' · '+c.phone:'')]),search:1},{k:'service',l:'Service',t:'select',o:SERV.map(x=>[x,x])},{k:'serviceOther',l:'Which service? (type here)',dep:['service','Other']},{k:'funcList',l:'Function dates — pick date, event & side (up to 10)',t:'funcs'},{k:'deliverables',l:'Deliverables',t:'select',o:dv.map(x=>[x,x])},{k:'details',l:'Details',t:'area'},{k:'startDate',l:'Start date',t:'date'},{k:'deliveryDate',l:'Delivery deadline',t:'date'},{k:'amount',l:'Total amount (₹)',t:'number'},{k:'terms',l:'Payment terms — which day, how much',t:'terms'},{k:'status',l:'Status',t:'select',o:['Ongoing','Completed'].map(x=>[x,x])}]};
@@ -305,12 +324,13 @@ const saveP=(d,id)=>{const ids=d.ownerIds||[];if(!ids.length)throw Error('Select
   x.terms=(x.terms||[]).map(t=>({label:t.label||'Payment',date:t.date||'',amount:+t.amount||0})).sort((a,b)=>(a.date||'9999').localeCompare(b.date||'9999'));
   const tsum=x.terms.reduce((a,t)=>a+t.amount,0);if(x.amount&&tsum>x.amount)throw Error(`Payment terms total (${inr(tsum)}) is more than the project amount (${inr(x.amount)})`);
   if(x.service==='Other')x.service=(x.serviceOther||'').trim()||'Other';delete x.serviceOther;x.funcList=(x.funcList||[]).sort((a,b)=>a.date.localeCompare(b.date));if(x.funcList.length)x.funcDates=x.funcList.map(r=>`${fmtDay(r.date)} – ${r.event} (${r.side})`).join('\n');
-  return id?updateDoc(doc(fs,'projects',id),x):addDoc(collection(fs,'projects'),{...x,payments:[]})};
+  const r=id?updateDoc(doc(fs,'projects',id),x):addDoc(collection(fs,'projects'),{...x,payments:[]});
+  return r.then(v=>{logAct((id?'Updated':'Created')+' project — '+x.title,{clientId:x.clientId,projectId:id||(v&&v.id)||'',kind:'project'});return v})};
 const addProject=(pre={})=>{const v={status:'Ongoing',service:SERV[0],side:'Both sides',deliverables:'Classic',amount:0,...pre};v.ownerIds=pre.ownerIds||(pre.clientId?[pre.clientId]:[]);return db.clients.length?form('New project',projF(v),v,d=>saveP(d)):toast('Add a client first')};
 const editProject=p=>{const v={...p,ownerIds:owners(p),terms:p.terms||[]};if(!SERV.includes(p.service)){v.service='Other';v.serviceOther=p.service}form('Edit project',projF(v),v,d=>saveP(d,p.id))};
-const delProject=async id=>{if(!confirm('This deletes the project and all its events. Continue?'))return;try{const w=writeBatch(fs);db.events.filter(e=>e.projectId===id).forEach(e=>w.delete(doc(fs,'events',e.id)));w.delete(doc(fs,'projects',id));await w.commit()}catch(x){toast(nice(x))}};
-const addPayment=(p,after)=>form('Add payment',[{k:'amount',l:'Amount received (₹)',t:'number',r:1},{k:'date',l:'Date',t:'date',r:1},{k:'mode',l:'Mode',t:'select',o:['UPI','Cash','Bank transfer','Cheque','Other'].map(x=>[x,x])},{k:'note',l:'Note'}],{date:todayS(),mode:'UPI'},async d=>{await updateDoc(doc(fs,'projects',p.id),{payments:[...(p.payments||[]),{amount:+d.amount||0,date:d.date,mode:d.mode,note:d.note||''}]});if(after)setTimeout(after,80)});
-const undoPayment=p=>confirm('Remove the last payment?')&&updateDoc(doc(fs,'projects',p.id),{payments:(p.payments||[]).slice(0,-1)}).catch(x=>toast(nice(x)));
+const delProject=async id=>{if(!confirm('This deletes the project and all its events (and its staff payment records). Continue?'))return;try{const w=writeBatch(fs);db.events.filter(e=>e.projectId===id).forEach(e=>w.delete(doc(fs,'events',e.id)));db.staffPay.filter(z=>z.projectId===id).forEach(z=>{w.delete(doc(fs,'staffPay',z.id));w.delete(doc(fs,'staffPayAmt',z.id))});w.delete(doc(fs,'projects',id));const pj=db.projects.find(z=>z.id===id)||{};await w.commit();logAct('Deleted project — '+(pj.title||''),{clientId:pj.clientId,kind:'project'})}catch(x){toast(nice(x))}};
+const addPayment=(p,after)=>form('Add payment',[{k:'amount',l:'Amount received (₹)',t:'number',r:1},{k:'date',l:'Date',t:'date',r:1},{k:'mode',l:'Mode',t:'select',o:['UPI','Cash','Bank transfer','Cheque','Other'].map(x=>[x,x])},{k:'note',l:'Note'}],{date:todayS(),mode:'UPI'},async d=>{await updateDoc(doc(fs,'projects',p.id),{payments:[...(p.payments||[]),{amount:+d.amount||0,date:d.date,mode:d.mode,note:d.note||'',by:me.name,at:Date.now()}]});logAct('Payment received '+inr(+d.amount||0)+' ('+d.mode+') — '+p.title,{clientId:p.clientId,projectId:p.id,kind:'payment'});if(after)setTimeout(after,80)});
+const undoPayment=p=>confirm('Remove the last payment?')&&updateDoc(doc(fs,'projects',p.id),{payments:(p.payments||[]).slice(0,-1)}).then(()=>{const l=(p.payments||[]).slice(-1)[0]||{};logAct('Removed payment '+inr(l.amount)+' — '+p.title,{clientId:p.clientId,projectId:p.id,kind:'payment'})}).catch(x=>toast(nice(x)));
 /* ---------- payment terms: live tracker (payments received are matched to the terms in date order) ---------- */
 const termStates=p=>{let rem=pay(p).paid;const td=todayS();return(p.terms||[]).map(t=>{const a=+t.amount||0,pd=Math.min(a,rem);rem-=pd;return{...t,amount:a,paid:pd,due:a-pd,state:a>0&&pd>=a?'paid':pd>0?'partial':(t.date&&t.date<td?'overdue':'upcoming')}})};
 const termsBlock=p=>{const ts=termStates(p);if(!ts.length)return'';const done=ts.filter(t=>t.state==='paid').length,nx=ts.find(t=>t.state!=='paid');
@@ -324,7 +344,7 @@ function termsModal(id,refresh){
   const when=t=>{if(!t.date)return'';const n=dd(t.date);return n<0?`Overdue by ${-n} day${-n===1?'':'s'}`:n===0?'Due today':`Due in ${n} day${n===1?'':'s'}`};
   const LBL={paid:['Paid','ok'],partial:['Partly paid','warn'],overdue:['Overdue','bad'],upcoming:['Upcoming','']};
   const body=`<div class="paybox ${x.due?'':'is-clear'}"><div class="pay-grid"><div><small>Total</small><b>${inr(x.total)}</b></div><div class="pg"><small>Received</small><b>${inr(x.paid)}</b></div><div class="pd"><small>Pending</small><b>${inr(x.due)}</b></div></div><div class="track"><i style="width:${pc}%"></i></div><div class="pay-state">${x.due?`${pc}% paid`:`${ico('circle-check')} Fully paid`}</div></div>
-  ${nx?`<div class="tnext ${nx.state==='overdue'?'bad':''}">${ico(nx.state==='overdue'?'triangle-exclamation':'bell')}<div><b>Next: ${esc(nx.label)} — ${inr(nx.due)}</b><span>${nx.date?esc(fmtDay(nx.date))+' · '+when(nx):'No date set'}</span></div></div>`:`<div class="tnext done">${ico('circle-check')}<div><b>All payment terms are completed</b><span>Thank you!</span></div></div>`}
+  ${nx?`<div class="tnext ${nx.state==='overdue'?'bad':''}">${ico(nx.state==='overdue'?'triangle-exclamation':'bell')}<div><b>Next: ${esc(nx.label)} — ${inr(nx.due)}</b><span>${nx.date?esc(fmtDay(nx.date))+' · '+when(nx):'No date set'}</span></div></div>`:ts.length?`<div class="tnext done">${ico('circle-check')}<div><b>All payment terms are completed</b><span>Thank you!</span></div></div>`:''}
   <div class="tl">${ts.map((t,i)=>`<div class="tl-i ${t.state} ${i===nowIdx?'now':''}"><span class="tl-dot">${t.state==='paid'?ico('check'):t.state==='overdue'?ico('exclamation'):t.state==='partial'?ico('hourglass-half'):i+1}</span><div class="tl-b"><div class="tl-h"><b>${esc(t.label)}</b>${pill(LBL[t.state][0],LBL[t.state][1])}</div><div class="tl-m">${t.date?esc(fmtDay(t.date)):'No date'} · <b>${inr(t.amount)}</b>${t.state!=='paid'&&t.date?` · <em>${when(t)}</em>`:''}</div>${t.state==='partial'?`<div class="tl-sub">Received ${inr(t.paid)} · Pending ${inr(t.due)}</div>`:''}</div></div>`).join('')}</div>
   ${unsched>0?`<p class="hint">${inr(unsched)} of the project amount is not scheduled in any term yet.</p>`:''}`;
   const{m,close}=popup(esc(p.title)+' — payment terms',body,`${adm?`<button type="button" class="btn outline" id="tadd">${ico('plus')} Add payment</button>`:''}<button type="button" class="btn btn-gold" id="tclose">Close</button>`);
@@ -337,10 +357,11 @@ const saveE=(d,id)=>{const p=db.projects.find(x=>x.id===d.projectId);if(!p)throw
   if(Object.keys(tc).some(k=>k!=='otherName')||!old||old.teamCounts)x.team=TEAMR.filter(r=>tc[r[0]]).map(r=>`${r[0]==='other'?(tc.otherName||'Other'):r[1]} × ${tc[r[0]]}`).join('\n');const ev=(d.evDetails||[]).filter(r=>r.type).sort((a,b)=>(a.time||'99').localeCompare(b.time||'99')),f1=ev.find(r=>r.time);
   const addH=(t,h)=>{const[H,M]=t.split(':').map(Number);return String((H+h)%24).padStart(2,'0')+':'+String(M).padStart(2,'0')};
   x.evDetails=ev;x.time=f1?f1.time:'';x.endTime=ev.length===1&&ev[0].time&&ev[0].hours?addH(ev[0].time,+ev[0].hours):'';
-  return id?updateDoc(doc(fs,'events',id),x):addDoc(collection(fs,'events'),x)};
+  const r=id?updateDoc(doc(fs,'events',id),x):addDoc(collection(fs,'events'),x);
+  return r.then(v=>{logAct((id?'Updated':'Added')+' event — '+x.type+' ('+x.projectTitle+') · '+fmtDay(x.date)+' · '+x.status,{clientId:x.clientId,projectId:x.projectId,kind:'event'});return v})};
 const addEvent=(pre={})=>db.projects.length?form('New event',evF(),{types:['Wedding'],status:'Pending',side:'Both sides',...pre},d=>saveE(d)):toast('Create a project first');
 const editEvent=e=>{const v={...e,types:etypes(e),evDetails:e.evDetails||etypes(e).map((t,i)=>({type:t,time:i?'':(e.time||''),hours:'',details:''}))};form('Edit event',evF(),v,d=>saveE(d,e.id))};
-const delEvent=id=>confirm('Delete this event?')&&deleteDoc(doc(fs,'events',id)).catch(x=>toast(nice(x)));
+const delEvent=id=>{const e=db.events.find(z=>z.id===id)||{};return confirm('Delete this event?')&&deleteDoc(doc(fs,'events',id)).then(()=>logAct('Deleted event — '+(e.type||'')+' · '+fmtDay(e.date),{clientId:e.clientId,projectId:e.projectId,kind:'event'})).catch(x=>toast(nice(x)))};
 
 /* share an event: builds a WhatsApp-ready message the admin can edit, then send anywhere */
 const evText=e=>{const cn=e.clientName||cname(e.clientId),pn=e.projectTitle||pname(e.projectId),tm=[fmt12(e.time),fmt12(e.endTime)].filter(Boolean).join(' – ');
@@ -383,7 +404,7 @@ const shareEvent=e=>{
 };
 
 const DF=()=>[{k:'title',l:'Heading (Pre-wedding, Haldi, Mehendi...)',r:1,dl:DL_SUGG},{k:'link',l:'Delivery link (Drive / Photos / YouTube...)',t:'url',r:1},{k:'thumb',l:'Preview photo',t:'img'}];
-const saveD=(d,clientId,id)=>{if(!/^https?:\/\//i.test(d.link||''))throw Error('Link must start with http:// or https://');const x={title:d.title.trim(),link:d.link.trim(),thumb:d.thumb||'',clientId};return id?updateDoc(doc(fs,'deliveries',id),x):addDoc(collection(fs,'deliveries'),{...x,createdAt:Date.now()})};
+const saveD=(d,clientId,id)=>{if(!/^https?:\/\//i.test(d.link||''))throw Error('Link must start with http:// or https://');const x={title:d.title.trim(),link:d.link.trim(),thumb:d.thumb||'',clientId};const r=id?updateDoc(doc(fs,'deliveries',id),x):addDoc(collection(fs,'deliveries'),{...x,createdAt:Date.now()});return r.then(v=>{logAct((id?'Updated':'Added')+' delivery card — '+x.title,{clientId,kind:'delivery'});return v})};
 const addDeliv=clientId=>form('New delivery card',DF(),{},d=>saveD(d,clientId));
 const editDeliv=d=>form('Edit delivery card',DF(),d,x=>saveD(x,d.clientId,d.id));
 const delDeliv=id=>confirm('Delete this delivery card?')&&deleteDoc(doc(fs,'deliveries',id)).catch(x=>toast(nice(x)));
@@ -395,13 +416,14 @@ const addClient=()=>form('New client',CF(0),{pw:genPass()},async d=>{
   const ph=d.phone.replace(/\D/g,'');if(db.clients.some(c=>c.phone===ph))throw Error('This number is already registered');
   const uid=await withSecondary(async a=>(await createUserWithEmailAndPassword(a,em(ph),d.pw)).user.uid);
   const b=writeBatch(fs);b.set(doc(fs,'clients',uid),{...cData(d),phone:ph,verified:false});b.set(doc(fs,'clientSecrets',uid),{pw:d.pw,note:d.note||''});await b.commit();
+  logAct('Created client — '+d.name,{clientId:uid,kind:'client'});
   setTimeout(()=>credsModal('Client created',d.name,ph,d.pw,d.altPhone,0),60)});
 const editClient=c=>{const old=db.secrets[c.id];form('Edit client',CF(1),{...c,pw:old,note:db.notes[c.id]},async d=>{
   if(d.pw!==old)await withSecondary(async a=>{const u=await signInWithEmailAndPassword(a,em(c.phone),old);await updatePassword(u.user,d.pw)});
-  await updateDoc(doc(fs,'clientSecrets',c.id),{pw:d.pw,note:d.note||''});await updateDoc(doc(fs,'clients',c.id),cData(d))})};
+  await updateDoc(doc(fs,'clientSecrets',c.id),{pw:d.pw,note:d.note||''});await updateDoc(doc(fs,'clients',c.id),cData(d));logAct('Updated client details — '+d.name,{clientId:c.id,kind:'client'})})};
 const delClient=async c=>{if(!confirm('This deletes the client and the projects only they own. Projects shared with other clients are kept. Continue?'))return;
   try{await withSecondary(async a=>{const u=await signInWithEmailAndPassword(a,em(c.phone),db.secrets[c.id]);await deleteUser(u.user)}).catch(()=>{});
-    const w=writeBatch(fs);db.projects.filter(p=>owners(p).includes(c.id)).forEach(p=>{const o=owners(p).filter(i=>i!==c.id);if(o.length)w.update(doc(fs,'projects',p.id),{ownerIds:o,clientId:o[0]});else{db.events.filter(e=>e.projectId===p.id).forEach(e=>w.delete(doc(fs,'events',e.id)));w.delete(doc(fs,'projects',p.id))}});db.deliveries.filter(x=>x.clientId===c.id).forEach(x=>w.delete(doc(fs,'deliveries',x.id)));w.delete(doc(fs,'clients',c.id));w.delete(doc(fs,'clientSecrets',c.id));await w.commit();view='clients';render()}catch(x){toast(nice(x))}};
+    const w=writeBatch(fs);db.projects.filter(p=>owners(p).includes(c.id)).forEach(p=>{const o=owners(p).filter(i=>i!==c.id);if(o.length)w.update(doc(fs,'projects',p.id),{ownerIds:o,clientId:o[0]});else{db.events.filter(e=>e.projectId===p.id).forEach(e=>w.delete(doc(fs,'events',e.id)));db.staffPay.filter(z=>z.projectId===p.id).forEach(z=>{w.delete(doc(fs,'staffPay',z.id));w.delete(doc(fs,'staffPayAmt',z.id))});w.delete(doc(fs,'projects',p.id))}});db.deliveries.filter(x=>x.clientId===c.id).forEach(x=>w.delete(doc(fs,'deliveries',x.id)));w.delete(doc(fs,'clients',c.id));w.delete(doc(fs,'clientSecrets',c.id));await w.commit();logAct('Deleted client — '+c.name,{kind:'client'});view='clients';render()}catch(x){toast(nice(x))}};
 const shareLogin=(c,pw,staff)=>{const n=String(c.altPhone||c.phone).replace(/\D/g,'').slice(-10);
   const msg=`Hello ${c.name}, your Shubham Production ${staff?'staff':'client'} portal login:\nWebsite: ${PAGE}\nMobile: ${c.phone}\nPassword: ${pw}\n${staff?'You can see your assigned events here and message the studio.':'You can see your events, payments and delivery link here.'}`;
   window.open('https://wa.me/91'+n+'?text='+encodeURIComponent(msg),'_blank','noopener')};
@@ -413,18 +435,141 @@ const addStaff=()=>form('New staff member',SF(0),{pw:genPass(),role:'Staff',acti
   const ph=d.phone.replace(/\D/g,'');if(db.staff.some(s=>s.phone===ph))throw Error('This number is already registered');
   const uid=await withSecondary(async a=>(await createUserWithEmailAndPassword(a,emS(ph),d.pw)).user.uid);
   const b=writeBatch(fs);b.set(doc(fs,'staff',uid),{...sData(d),phone:ph});b.set(doc(fs,'staffSecrets',uid),{pw:d.pw,note:d.note||''});await b.commit();
+  logAct('Created staff account — '+d.name,{staffId:uid,kind:'staff'});
   setTimeout(()=>credsModal('Staff account created',d.name,ph,d.pw,d.altPhone,1),60)});
 const editStaff=s=>{const old=db.ssecrets[s.id];form('Edit staff',SF(1),{...s,active:s.active===false?'no':'yes',access:s.access==='full'?'full':'limited',pw:old,note:db.notes[s.id]},async d=>{
   if(d.pw!==old)await withSecondary(async a=>{const u=await signInWithEmailAndPassword(a,emS(s.phone),old);await updatePassword(u.user,d.pw)});
-  await updateDoc(doc(fs,'staffSecrets',s.id),{pw:d.pw,note:d.note||''});await updateDoc(doc(fs,'staff',s.id),sData(d))})};
-const delStaff=async s=>{if(!confirm('Delete this staff account and their messages?'))return;
+  await updateDoc(doc(fs,'staffSecrets',s.id),{pw:d.pw,note:d.note||''});await updateDoc(doc(fs,'staff',s.id),sData(d));logAct('Updated staff — '+d.name,{staffId:s.id,kind:'staff'})})};
+const delStaff=async s=>{if(!confirm('Delete this staff account, their messages and their payment records?'))return;
   try{await withSecondary(async a=>{const u=await signInWithEmailAndPassword(a,emS(s.phone),db.ssecrets[s.id]);await deleteUser(u.user)}).catch(()=>{});
-    const w=writeBatch(fs);db.reqs.filter(r=>r.staffId===s.id).forEach(r=>w.delete(doc(fs,'staffRequests',r.id)));w.delete(doc(fs,'staff',s.id));w.delete(doc(fs,'staffSecrets',s.id));await w.commit();view='staff';render()}catch(x){toast(nice(x))}};
+    const w=writeBatch(fs);db.reqs.filter(r=>r.staffId===s.id).forEach(r=>w.delete(doc(fs,'staffRequests',r.id)));db.staffPay.filter(z=>z.staffId===s.id).forEach(z=>{w.delete(doc(fs,'staffPay',z.id));w.delete(doc(fs,'staffPayAmt',z.id))});w.delete(doc(fs,'staff',s.id));w.delete(doc(fs,'staffSecrets',s.id));await w.commit();logAct('Deleted staff — '+s.name,{kind:'staff'});view='staff';render()}catch(x){toast(nice(x))}};
 const replyReq=r=>form('Reply to '+esc(r.name),[{k:'reply',l:'Your reply',t:'area'}],{reply:r.reply||''},d=>updateDoc(doc(fs,'staffRequests',r.id),{reply:d.reply||'',repliedAt:Date.now(),status:'done'}));
 const reqCard=(r,adm)=>`<article class="card req"><div class="card-h"><div><h3>${esc(adm?r.name:'Your message')}</h3><small>${adm?esc(r.role||'Staff')+' · ':''}${new Date(r.createdAt||0).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit',hour12:true})}</small></div>${stPill(r.status==='done'?'Completed':'Pending')}</div><p class="pre">${esc(r.text)}</p>${r.reply?`<p class="reply pre"><b>Admin reply:</b> ${esc(r.reply)}</p>`:''}${adm?`<div class="row-actions">${btn('rr',r.id,'Reply','reply')}${btn('rd',r.id,r.status==='done'?'Reopen':'Mark done','check')}${btn('rx',r.id,'Delete','trash')}</div>`:''}</article>`;
 
+/* ---------- STAFF PAYMENTS: project-wise (agreed amount, paid, expenses by category, full who/when record) ----------
+   one document per staff + project:  staffPay/{staffId}_{projectId}
+   { staffId, projectId, projectTitle, total, note, entries:[{id,kind,amount,date,note,by,byName,byRole,at}] }
+   kind = 'paid' (money paid to the staff)  |  team / editing / travel / other (project expenses)          */
+const SPC=[['team','Team'],['editing','Editing'],['travel','Travelling'],['photography','Photography'],['other','Other']];
+const spLbl=k=>k==='paid'?'Payment to staff':((SPC.find(c=>c[0]===k)||[0,k])[1]);
+const spTotal=d=>(db.spAmt&&d.id in db.spAmt)?db.spAmt[d.id]:(+d.total||0);
+/* agreed amounts are kept in an ADMIN-ONLY collection so staff can never read them; old records are moved automatically */
+let migT,spMig=false;
+const queueMig=()=>{clearTimeout(migT);migT=setTimeout(()=>migrateSp().catch(()=>{}),2500)};
+async function migrateSp(){if(spMig||me?.role!=='admin')return;const old=db.staffPay.filter(d=>d.total!==undefined);if(!old.length)return;spMig=true;
+  try{for(let i=0;i<old.length;i+=200){const b=writeBatch(fs);old.slice(i,i+200).forEach(d=>{if(!(d.id in db.spAmt))b.set(doc(fs,'staffPayAmt',d.id),{total:+d.total||0});b.update(doc(fs,'staffPay',d.id),{total:deleteField()})});await b.commit()}}catch{spMig=false}}
+const spSum=d=>{const e=d.entries||[],s=k=>e.filter(x=>x.kind===k).reduce((a,x)=>a+(+x.amount||0),0),cats=SPC.map(c=>[c[0],c[1],s(c[0])]),total=spTotal(d),paid=s('paid');return{total,paid,due:Math.max(0,total-paid),spent:cats.reduce((a,c)=>a+c[2],0),cats}};
+const spTotals=l=>l.map(spSum).reduce((a,x)=>({total:a.total+x.total,paid:a.paid+x.paid,due:a.due+x.due,spent:a.spent+x.spent}),{total:0,paid:0,due:0,spent:0});
+const spStats=(t,sc='',adm=true)=>!adm?`<div class="stats s4">${stat('Received from studio',inr(t.paid),1,'circle-check','sp:paid|'+sc)}${stat('Expenses / other entries',inr(t.spent),0,'receipt','sp:spent|'+sc)}</div>`:`<div class="stats s4">${stat('Agreed amount',inr(t.total),1,'file-invoice','sp:total|'+sc)}${stat('Paid to staff',inr(t.paid),0,'circle-check','sp:paid|'+sc)}${stat('Pending',inr(t.due),1,'hourglass-half','sp:due|'+sc)}${stat('Expenses',inr(t.spent),0,'receipt','sp:spent|'+sc)}</div>`;
+const spCard=(d,adm,open)=>{const x=spSum(d),pc=x.total?Math.min(100,Math.round(x.paid/x.total*100)):0,mx=Math.max(1,...x.cats.map(c=>c[2])),en=[...(d.entries||[])].sort((a,b)=>(b.at||0)-(a.at||0));
+  const mine=e=>adm||(e.by===me.uid&&e.kind!=='paid');
+  return`<article class="card sp"><div class="card-h"><div><h3>${esc(d.projectTitle||pname(d.projectId))}</h3><small>${adm?esc(sname(d.staffId))+' · ':''}${d.note?esc(d.note):d.projectId?'Project payment':'Separate payments (not linked to a project)'}</small></div>${adm?(x.total&&!x.due?pill('Settled','ok'):x.total?pill('Due '+inr(x.due),'warn'):pill('No amount set','')):''}</div>
+  ${adm?`<div class="paybox ${x.total&&!x.due?'is-clear':''}"><div class="pay-grid"><div><small>Agreed</small><b>${inr(x.total)}</b></div><div class="pg"><small>Paid</small><b>${inr(x.paid)}</b></div><div class="pd"><small>Pending</small><b>${inr(x.due)}</b></div></div><div class="track"><i style="width:${pc}%"></i></div><div class="pay-state">${x.total?(x.due?pc+'% paid':ico('circle-check')+' Fully paid'):'Agreed amount not set'}</div></div>`:`<div class="paybox is-clear"><div class="pay-grid one"><div class="pg"><small>Received from studio</small><b>${inr(x.paid)}</b></div></div></div>`}
+  <div class="spcats"><div class="spc-h"><b>${adm?'Spending by type':'Entries by type'}</b><span>${inr(x.spent)}</span></div>${x.cats.map(c=>`<div class="bar-row sp-row"><span>${c[1]}</span><div class="track"><i style="width:${c[2]/mx*100}%"></i></div><b>${inr(c[2])}</b></div>`).join('')}</div>
+  <details class="splog" ${open?'open':''}><summary>${ico('clock-rotate-left')} ${en.length} record${en.length===1?'':'s'} — who updated &amp; when</summary>${en.length?`<div class="table-wrap"><table class="mini splt"><thead><tr><th>Type</th><th>Amount</th><th>Date</th><th>Updated by</th><th></th></tr></thead><tbody>${en.map(e=>`<tr><td>${esc(spLbl(e.kind))}${e.note?`<br><small>${esc(e.note)}</small>`:''}</td><td><b>${inr(e.amount)}</b></td><td>${esc(e.date||'')}</td><td>${esc(e.byName||'—')}<br><small>${esc(e.byRole||'')} · ${fmtAt(e.at)}</small></td><td>${mine(e)?`<button class="lnk bad" data-spd="${d.id}|${e.id}" aria-label="Remove record">${ico('trash')}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`:'<p class="hint">Nothing recorded yet.</p>'}</details>
+  <div class="row-actions">${open?'':btn('spm',d.id,'Open dashboard','expand')}${adm?btn('spx',d.id+'|paid','Add payment','plus')+btn('spx',d.id+'|exp','Add expense','receipt')+btn('spe',d.id,'Edit amount','pen')+btn('spr',d.id,'Remove','trash'):btn('spx',d.id+'|exp','Add expense','plus')}</div></article>`};
+const addSpEntry=(id,mode,after)=>{const d=db.staffPay.find(x=>x.id===id);if(!d)return;
+  const kinds=mode==='paid'?[['paid','Payment to staff']]:SPC.map(c=>[c[0],c[1]]);
+  form(mode==='paid'?'Add payment to staff':'Add expense — '+esc(d.projectTitle||''),[{k:'kind',l:mode==='paid'?'Type':'Expense category',t:'select',o:kinds},{k:'amount',l:'Amount (₹)',t:'number',r:1},{k:'date',l:'Date',t:'date',r:1},{k:'note',l:'Note (what was it for)'}],{date:todayS(),kind:kinds[0][0]},async v=>{
+    const amt=+v.amount||0;if(amt<=0)throw Error('Enter a valid amount');
+    const en={id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),kind:v.kind,amount:amt,date:v.date,note:(v.note||'').trim(),by:me.uid,byName:me.name,byRole:roleLabel(),at:Date.now()};
+    await updateDoc(doc(fs,'staffPay',id),{entries:arrayUnion(en)});
+    logAct(spLbl(v.kind)+' '+inr(amt)+' — '+d.projectTitle+(en.note?' ('+en.note+')':''),{staffId:d.staffId,projectId:d.projectId,kind:'staffpay'});if(after)setTimeout(()=>spModal(id),80)})};
+const delSpEntry=ref=>{const[id,eid]=ref.split('|'),d=db.staffPay.find(x=>x.id===id),en=d&&(d.entries||[]).find(x=>x.id===eid);if(!en||!confirm('Remove this record? The removal is also logged.'))return;
+  updateDoc(doc(fs,'staffPay',id),{entries:arrayRemove(en)}).then(()=>logAct('Removed '+spLbl(en.kind)+' '+inr(en.amount)+' (added by '+en.byName+') — '+d.projectTitle,{staffId:d.staffId,projectId:d.projectId,kind:'staffpay'})).catch(x=>toast(nice(x)))};
+const assignSp=staffId=>{const s=db.staff.find(x=>x.id===staffId);if(!s)return;const taken=db.staffPay.filter(x=>x.staffId===staffId).map(x=>x.projectId);
+  const opts=db.projects.filter(p=>!taken.includes(p.id)).map(p=>[p.id,`${p.title} (${ownerNames(p)})`]);
+  if(!opts.length)return toast(db.projects.length?'All projects are already added for this staff':'Create a project first');
+  form('Add project payment — '+esc(s.name),[{k:'projectId',l:'Project',t:'select',o:opts},{k:'total',l:'Agreed amount for this staff on this project (₹)',t:'number',r:1},{k:'note',l:'Work / role on this project (optional)'}],{},async v=>{
+    const p=db.projects.find(x=>x.id===v.projectId);if(!p)throw Error('Select a project');
+    await setDoc(doc(fs,'staffPay',staffId+'_'+p.id),{staffId,projectId:p.id,projectTitle:p.title||'',note:(v.note||'').trim(),entries:[],createdAt:Date.now()});await setDoc(doc(fs,'staffPayAmt',staffId+'_'+p.id),{total:+v.total||0});
+    logAct('Project payment set '+inr(+v.total||0)+' — '+p.title+' → '+s.name,{staffId,projectId:p.id,kind:'staffpay'})})};
+const editSp=(id,after)=>{const d=db.staffPay.find(x=>x.id===id);if(!d)return;
+  form('Edit agreed amount — '+esc(d.projectTitle||''),[{k:'total',l:'Agreed amount (₹)',t:'number',r:1},{k:'note',l:'Work / role on this project'}],{total:spTotal(d),note:d.note},async v=>{
+    await setDoc(doc(fs,'staffPayAmt',id),{total:+v.total||0});await updateDoc(doc(fs,'staffPay',id),{note:(v.note||'').trim(),total:deleteField()});
+    logAct('Agreed amount changed '+inr(spTotal(d))+' → '+inr(+v.total||0)+' — '+d.projectTitle+' ('+sname(d.staffId)+')',{staffId:d.staffId,projectId:d.projectId,kind:'staffpay'});if(after)setTimeout(()=>spModal(id),80)})};
+const delSp=id=>{const d=db.staffPay.find(x=>x.id===id);if(!d||!confirm('Remove this project payment and all its records?'))return;
+  deleteDoc(doc(fs,'staffPayAmt',id)).catch(()=>{});deleteDoc(doc(fs,'staffPay',id)).then(()=>{closeModal();logAct('Removed project payment record — '+d.projectTitle+' ('+sname(d.staffId)+')',{staffId:d.staffId,projectId:d.projectId,kind:'staffpay'})}).catch(x=>toast(nice(x)))};
+
 const myProfile=()=>{const s=db.studio||{};form('Studio profile (shown to clients)',[{k:'name',l:'Name',r:1},{k:'phone',l:'Contact / WhatsApp number',r:1},{k:'photo',l:'Photo',t:'img',max:320}],{name:s.name||me.name,phone:s.phone||'+91 88023 89087',photo:s.photo||me.photo||''},async d=>{
   await setDoc(doc(fs,'config','studio'),{name:d.name.trim(),phone:d.phone.trim(),photo:d.photo||''});await updateDoc(doc(fs,'admins',me.uid),{photo:d.photo||''});me.photo=d.photo||'';render()})};
+
+/* ---------- interactive dashboards: every number / row opens its details ---------- */
+const closeModal=()=>{const m=$('#modal');m.hidden=true;document.body.classList.remove('modal-open')};
+const inSp=()=>{const m=$('#modal');return!!(m&&!m.hidden&&m.dataset.sp)};
+const rowBtn=(attr,id,main,sub,right)=>`<button type="button" class="lrow" data-${attr}="${esc(id)}"><span class="lr-b"><b>${main}</b>${sub?`<small>${sub}</small>`:''}</span><span class="lr-r">${right}</span>${ico('chevron-right')}</button>`;
+function listModal(title,head,rows,emptyMsg){const{close}=popup(title,`${head||''}<div class="lrows">${rows||empty(emptyMsg||'Nothing to show.','folder-open')}</div>`,`<button type="button" class="btn btn-gold" id="lmx">Close</button>`);$('#lmx').onclick=close;wire()}
+function kpiOpen(k){
+  if(k.startsWith('sp:')){const[kk,sc]=k.slice(3).split('|');return spListOpen(kk,sc)}
+  const[sc,key]=k.split(':');
+  if(sc==='s')return go('events');
+  if(sc==='c')return go(key==='pay'?'payments':'projects');
+  if(key==='clients')return go('clients');
+  if(key==='projects'){pf={...PF0};return go('projects')}
+  if(key==='evmonth'){ef={...EF0,month:todayS().slice(0,7)};return go('events')}
+  if(key==='evup'){ef={...EF0,when:'upcoming'};return go('events')}
+  const ps=db.projects,t=tot(ps),pc=x=>x.total?Math.round(x.paid/x.total*100)+'%':'—';
+  const cfg={billed:['Total billed — by project',ps],recv:['Received — by project',ps.filter(p=>pay(p).paid>0)],pend:['Payment pending — by project',ps.filter(p=>pay(p).due>0)],rate:['Collection rate — by project',ps]}[key];
+  const f=p=>{const x=pay(p);return key==='recv'?x.paid:key==='pend'?x.due:key==='rate'?(x.total?x.paid/x.total:0):x.total};
+  const rows=[...cfg[1]].sort((a,b)=>f(b)-f(a)).map(p=>{const x=pay(p);return rowBtn('pt',p.id,esc(p.title),esc(ownerNames(p))+' · Billed '+inr(x.total)+' · Received '+inr(x.paid)+' · Pending '+inr(x.due),key==='rate'?pc(x):inr(f(p)))}).join('');
+  listModal(cfg[0],`<div class="lsum"><div><small>Billed</small><b>${inr(t.total)}</b></div><div><small>Received</small><b>${inr(t.paid)}</b></div><div><small>Pending</small><b>${inr(t.due)}</b></div></div><p class="hint">Tap a project to see its payment details.</p>`,rows,'No projects here yet.');
+}
+function barOpen(v){const[kind,val]=v.split('|');ef={...EF0};if(kind==='month')ef.month=val;if(kind==='status')ef.status=val;if(kind==='type')ef.type=val;go('events')}
+function spListOpen(k,sc){
+  const adm=me.role==='admin',T={total:'Agreed amounts — project-wise',paid:'Paid to staff — project-wise',due:'Pending payments — project-wise',spent:'Expenses — project-wise'}[k];
+  const rows=db.staffPay.filter(d=>!sc||d.staffId===sc).map(d=>({d,x:spSum(d)})).filter(r=>k==='total'?r.x.total>0:k==='paid'?r.x.paid>0:k==='due'?r.x.due>0:r.x.spent>0).sort((a,b)=>b.x[k]-a.x[k]);
+  const sum=rows.reduce((n,r)=>n+r.x[k],0);
+  listModal(T,`<div class="lsum"><div><small>Total</small><b>${inr(sum)}</b></div><div><small>Records</small><b>${rows.length}</b></div></div><p class="hint">Tap any row to open its full payment dashboard.</p>`,
+    rows.map(r=>rowBtn('spm',r.d.id,esc(r.d.projectTitle||'Separate payments'),(adm?esc(sname(r.d.staffId))+' · Agreed '+inr(r.x.total)+' · Paid '+inr(r.x.paid)+' · Pending '+inr(r.x.due)+' · Expenses '+inr(r.x.spent):'Received '+inr(r.x.paid)+' · Other entries '+inr(r.x.spent)),inr(r.x[k]))).join(''),'Nothing here yet.');
+}
+/* one staff + one project (or separate payments): full dashboard in a popup */
+function spModal(id,refresh){
+  const d=db.staffPay.find(x=>x.id===id);if(!d)return;const adm=me.role==='admin',old=$('#modal .modal-b'),sc=refresh&&old?old.scrollTop:0;
+  const{m,close}=popup(esc(d.projectTitle||'Separate payments')+(adm?' — '+esc(sname(d.staffId)):''),`<div class="sp-modal">${spCard(d,adm,true)}</div>`,
+    `${adm?`<button type="button" class="btn outline" id="spst">${ico('user-tie')} Staff dashboard</button>`:''}${adm&&d.projectId?`<button type="button" class="btn outline" id="sppj">${ico('camera-retro')} Project cost</button>`:''}<button type="button" class="btn btn-gold" id="spx0">Close</button>`);
+  m.dataset.sp=id;$('#spx0').onclick=close;
+  const a=$('#spst');if(a)a.onclick=()=>{close();sid=d.staffId;lf='';go('staffp')};
+  const b=$('#sppj');if(b)b.onclick=()=>projModal(d.projectId);
+  wire();const nb=$('#modal .modal-b');if(nb)nb.scrollTop=sc;
+}
+/* one project: client money vs staff cost, per staff */
+function projModal(pid,refresh){
+  const p=db.projects.find(x=>x.id===pid);if(!p)return;const old=$('#modal .modal-b'),sc=refresh&&old?old.scrollTop:0;
+  const l=db.staffPay.filter(x=>x.projectId===pid),t=spTotals(l),cx=pay(p),cost=t.paid+t.spent,net=cx.paid-cost;
+  const cats=SPC.map(c=>[c[0],c[1],l.reduce((n,d)=>n+spSum(d).cats.find(z=>z[0]===c[0])[2],0)]),mx=Math.max(1,...cats.map(c=>c[2]));
+  const body=`<p class="hint" style="margin-top:6px">${esc(ownerNames(p))} · ${esc(p.service||'')}</p>
+  <div class="pm-grid"><div><small>Client billed</small><b>${inr(cx.total)}</b></div><div class="pg"><small>Client received</small><b>${inr(cx.paid)}</b></div><div><small>Staff agreed</small><b>${inr(t.total)}</b></div><div><small>Paid to staff</small><b>${inr(t.paid)}</b></div><div><small>Expenses</small><b>${inr(t.spent)}</b></div><div class="${net<0?'pd':'pg'}"><small>Net so far</small><b>${inr(net)}</b></div></div>
+  <div class="spcats"><div class="spc-h"><b>Spending by type</b><span>${inr(t.spent)}</span></div>${cats.map(c=>`<div class="bar-row sp-row"><span>${c[1]}</span><div class="track"><i style="width:${c[2]/mx*100}%"></i></div><b>${inr(c[2])}</b></div>`).join('')}</div>
+  <h4 class="pm-h">Staff on this project <small>(tap to open)</small></h4><div class="lrows">${l.length?l.map(d=>{const x=spSum(d);return rowBtn('spm',d.id,esc(sname(d.staffId)),'Agreed '+inr(x.total)+' · Paid '+inr(x.paid)+' · Expenses '+inr(x.spent),x.total&&!x.due?'Settled':x.total?'Due '+inr(x.due):'—')}).join(''):empty('No staff added to this project yet.','user-tie')}</div>
+  <p class="hint">Net so far = client received − (paid to staff + expenses).</p>`;
+  const{m,close}=popup(esc(p.title)+' — cost dashboard',body,`<button type="button" class="btn outline" id="pmadd">${ico('user-plus')} Add staff</button><button type="button" class="btn outline" id="pmpay">${ico('indian-rupee-sign')} Client payments</button><button type="button" class="btn btn-gold" id="pmx">Close</button>`);
+  m.dataset.pj=pid;$('#pmx').onclick=close;$('#pmadd').onclick=()=>assignProjStaff(pid);$('#pmpay').onclick=()=>termsModal(pid);
+  wire();const nb=$('#modal .modal-b'),_=0;if(nb)nb.scrollTop=sc;
+}
+const newEntry=(kind,amt,date,note)=>({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),kind,amount:amt,date,note:(note||'').trim(),by:me.uid,byName:me.name,byRole:roleLabel(),at:Date.now()});
+/* any payment / expense for a staff member — with or without a project (travel, photography, fee ...) */
+const addSpAny=staffId=>{const s=db.staff.find(x=>x.id===staffId);if(!s)return;
+  const popts=[['','— No project (separate payment) —'],...db.projects.map(p=>[p.id,`${p.title} (${ownerNames(p)})`])],kinds=[['paid','Payment to staff (fee)'],...SPC.map(c=>[c[0],c[1]])];
+  form('Add payment / expense — '+esc(s.name),[{k:'projectId',l:'Project (optional)',t:'select',o:popts},{k:'kind',l:'Type',t:'select',o:kinds},{k:'amount',l:'Amount (₹)',t:'number',r:1},{k:'date',l:'Date',t:'date',r:1},{k:'note',l:'Note (what was it for)'}],{date:todayS(),kind:'paid'},async v=>{
+    const amt=+v.amount||0;if(amt<=0)throw Error('Enter a valid amount');
+    const p=v.projectId?db.projects.find(x=>x.id===v.projectId):null,id=staffId+'_'+(p?p.id:'general'),title=p?(p.title||''):'Separate payments (no project)',en=newEntry(v.kind,amt,v.date,v.note);
+    if(db.staffPay.find(x=>x.id===id))await updateDoc(doc(fs,'staffPay',id),{entries:arrayUnion(en)});
+    else await setDoc(doc(fs,'staffPay',id),{staffId,projectId:p?p.id:'',projectTitle:title,note:'',entries:[en],createdAt:Date.now()});
+    logAct(spLbl(v.kind)+' '+inr(amt)+' — '+title+' → '+s.name+(en.note?' ('+en.note+')':''),{staffId,projectId:p?p.id:'',kind:'staffpay'})})};
+/* add a staff member to a project from the project cost dashboard */
+const assignProjStaff=pid=>{const p=db.projects.find(x=>x.id===pid);if(!p)return;const taken=db.staffPay.filter(x=>x.projectId===pid).map(x=>x.staffId);
+  const opts=db.staff.filter(s=>!taken.includes(s.id)).map(s=>[s.id,s.name+' · '+(s.role||'Staff')]);
+  if(!opts.length)return toast(db.staff.length?'All staff are already added to this project':'Add staff first');
+  form('Add staff to — '+esc(p.title),[{k:'staffId',l:'Staff member',t:'select',o:opts},{k:'total',l:'Agreed amount (₹)',t:'number',r:1},{k:'note',l:'Work / role on this project (optional)'}],{},async v=>{
+    const s=db.staff.find(x=>x.id===v.staffId);if(!s)throw Error('Select a staff member');
+    await setDoc(doc(fs,'staffPay',s.id+'_'+pid),{staffId:s.id,projectId:pid,projectTitle:p.title||'',note:(v.note||'').trim(),entries:[],createdAt:Date.now()});await setDoc(doc(fs,'staffPayAmt',s.id+'_'+pid),{total:+v.total||0});
+    logAct('Project payment set '+inr(+v.total||0)+' — '+p.title+' → '+s.name,{staffId:s.id,projectId:pid,kind:'staffpay'});setTimeout(()=>projModal(pid),80)})};
+/* flat ledger of every payment / expense, filterable by type; each row opens its dashboard */
+let lf='';
+const LF=[['','All'],['paid','Payments'],...SPC.map(c=>[c[0],c[1]])];
+function ledger(l){
+  const all=l.flatMap(d=>(d.entries||[]).map(e=>({e,d}))).filter(r=>!lf||r.e.kind===lf).sort((a,b)=>(b.e.date||'').localeCompare(a.e.date||'')||(b.e.at||0)-(a.e.at||0)),sum=all.reduce((n,r)=>n+(+r.e.amount||0),0);
+  return`<div class="panel"><div class="lg-h"><h3>Payment ledger</h3><span class="pill ok">${all.length} entr${all.length===1?'y':'ies'} · ${inr(sum)}</span></div><div class="chips">${LF.map(c=>`<button type="button" class="chip ${lf===c[0]?'on':''}" data-lf="${c[0]}">${c[1]}</button>`).join('')}</div>${all.length?`<div class="table-wrap"><table class="mini splt lgt"><thead><tr><th>Date</th><th>Type</th><th>Project</th><th>Amount</th><th>Updated by</th></tr></thead><tbody>${all.map(r=>`<tr class="clk" data-spm="${r.d.id}"><td>${esc(r.e.date||'')}</td><td>${esc(spLbl(r.e.kind))}${r.e.note?`<br><small>${esc(r.e.note)}</small>`:''}</td><td>${esc(r.d.projectTitle||'Separate')}</td><td><b>${inr(r.e.amount)}</b></td><td>${esc(r.e.byName||'—')}<br><small>${fmtAt(r.e.at)}</small></td></tr>`).join('')}</tbody></table></div>`:empty('No entries for this filter.','receipt')}</div>`}
 
 function wire(){
   const on=(a,fn)=>document.querySelectorAll(`[data-${a}]`).forEach(b=>b.onclick=e=>{e.preventDefault();fn(b.dataset[a])});
@@ -433,9 +578,10 @@ function wire(){
   on('ee',id=>editEvent(db.events.find(x=>x.id===id)));on('ed',delEvent);on('es',id=>shareEvent(db.events.find(x=>x.id===id)));
   on('co',id=>{cid=id;go('client')});
   on('ce',id=>editClient(C(id)));on('cd',id=>delClient(C(id)));on('cw',id=>shareLogin(C(id),db.secrets[id]));
-  on('so',id=>{sid=id;go('staffp')});on('se',id=>editStaff(S(id)));on('sd',id=>delStaff(S(id)));on('sw',id=>shareLogin(S(id),db.ssecrets[id],1));
+  on('so',id=>{sid=id;lf='';go('staffp')});on('se',id=>editStaff(S(id)));on('sd',id=>delStaff(S(id)));on('sw',id=>shareLogin(S(id),db.ssecrets[id],1));
   on('rr',id=>replyReq(R(id)));on('rd',id=>{const r=R(id);updateDoc(doc(fs,'staffRequests',id),{status:r.status==='done'?'open':'done'}).catch(x=>toast(nice(x)))});on('rx',id=>confirm('Delete this message?')&&deleteDoc(doc(fs,'staffRequests',id)).catch(x=>toast(nice(x))));
   on('cp',t=>copyText(t));on('pt',id=>termsModal(id));
+  on('spx',v=>{const[i,m]=v.split('|');addSpEntry(i,m,inSp())});on('spd',delSpEntry);on('spe',id=>editSp(id,inSp()));on('spr',delSp);on('kpi',kpiOpen);on('bar',barOpen);on('spm',id=>spModal(id));on('pcm',id=>projModal(id));on('cgo',id=>{closeModal();cid=id;go('client')});on('lf',v=>{lf=v;render()});
   on('rp',id=>{const t=document.querySelector(`[data-pwcell="${id}"]`),s=t.dataset.shown==='1';t.textContent=s?'••••••':(db.secrets[id]||db.ssecrets[id]||'—');t.dataset.shown=s?'0':'1'});
   on('go',v=>go(v));
   on('copy',copyTip);on('de',id=>editDeliv(db.deliveries.find(x=>x.id===id)));on('dd',delDeliv);
@@ -444,10 +590,10 @@ function wire(){
 }
 
 /* ---------- shell (sidebar + hamburger) shared by admin, staff and client ---------- */
-const ADMIN_NAV=[['home','Dashboard','chart-pie'],['projects','Projects','camera-retro'],['events','Events','calendar-days'],['clients','Clients','users'],['staff','Staff','user-tie']];
+const ADMIN_NAV=[['home','Dashboard','chart-pie'],['projects','Projects','camera-retro'],['events','Events','calendar-days'],['clients','Clients','users'],['staff','Staff','user-tie'],['spay','Staff Payments','wallet'],['activity','Activity log','clock-rotate-left']];
 const CLIENT_NAV=[['home','Overview','house'],['projects','My Projects','camera-retro'],['events','My Events','calendar-days'],['payments','Payments','indian-rupee-sign'],['delivery','Photos & Videos','photo-film']];
-const STAFF_NAV=[['home','My Work','briefcase'],['events','All My Events','calendar-days'],['contact','Message / Request','message']];
-const TITLES={home:'Dashboard',projects:'Projects',events:'Events',clients:'Clients',client:'Client',staff:'Staff',staffp:'Staff',payments:'Payments',delivery:'Photos & Videos',contact:'Message admin'};
+const STAFF_NAV=[['home','My Work','briefcase'],['events','All My Events','calendar-days'],['pay','My Payments','wallet'],['contact','Message / Request','message']];
+const TITLES={home:'Dashboard',projects:'Projects',events:'Events',clients:'Clients',client:'Client',staff:'Staff',staffp:'Staff',spay:'Staff Payments',activity:'Activity log',pay:'My Payments',payments:'Payments',delivery:'Photos & Videos',contact:'Message admin'};
 function go(v){view=v;navOpen=false;window.scrollTo({top:0,behavior:'instant'});render()}
 function setNav(o){navOpen=o;$('#side')?.classList.toggle('open',o);$('#scrim')?.classList.toggle('show',o);const t=$('#sideToggle');if(t){t.classList.toggle('active',o);t.setAttribute('aria-expanded',String(o))}document.body.classList.toggle('side-open',o)}
 function shell(){
@@ -468,19 +614,19 @@ function shell(){
 /* ---------- admin views ---------- */
 function adminView(){
   shell();
-  ({home,projects,events,clients,client:clientPage,staff:staffList,staffp:staffPage})[view]();wire();
+  ({home,projects,events,clients,client:clientPage,staff:staffList,staffp:staffPage,spay:staffPayView,activity:activityView})[view]();wire();
 }
 function home(){
   const t=tot(db.projects),td=todayS(),ym=td.slice(0,7);
-  const up=db.events.filter(e=>e.date>=td&&e.status!=='Cancelled').sort(evSort);
+  const up=db.events.filter(e=>e.date>=td&&e.status!=='Cancelled'&&!isDone(e)).sort(evSort);
   const ms=[...Array(6)].map((_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-5+i);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')});
   const due={};db.projects.forEach(p=>{const x=pay(p).due;if(x)due[p.clientId]=(due[p.clientId]||0)+x});
   const dl=Object.entries(due).sort((a,b)=>b[1]-a[1]).slice(0,5),ty=TYPES.map(s=>[s,db.events.filter(e=>etypes(e).includes(s)).length]).filter(r=>r[1]).sort((a,b)=>b[1]-a[1]).slice(0,6);
   $('#main').innerHTML=`<div class="top"><div><p class="eyebrow">Overview</p><h1>Studio dashboard</h1></div><div class="row-actions"><button class="btn btn-gold sm" data-go="clients">${ico('user-plus')} New client</button></div></div>
-  <div class="stats">${stat('Clients',db.clients.length,1,'users')}${stat('Projects',db.projects.length,0,'camera-retro')}${stat('Events this month',db.events.filter(e=>(e.date||'').startsWith(ym)).length,0,'calendar-check')}${stat('Upcoming events',up.length,0,'calendar-days')}${stat('Total billed',inr(t.total),0,'file-invoice')}${stat('Received',inr(t.paid),0,'circle-check')}${stat('Payment pending',inr(t.due),1,'hourglass-half')}${stat('Collection rate',(t.total?Math.round(t.paid/t.total*100):0)+'%',0,'chart-line')}</div>
-  <div class="grid2"><div class="panel"><h3>Events per month</h3>${bars(ms.map(m=>[mLabel(m),db.events.filter(e=>(e.date||'').startsWith(m)).length]))}</div><div class="panel"><h3>Events by status</h3>${bars(EST.map(s=>[s,db.events.filter(e=>e.status===s).length]))}</div></div>
-  <div class="grid2"><div class="panel"><h3>Top pending payments</h3>${dl.length?`<table class="mini">${dl.map(r=>`<tr><td><a href="#" data-co="${r[0]}">${esc(cname(r[0]))}</a></td><td class="r">${pill(inr(r[1]),'warn')}</td></tr>`).join('')}</table>`:empty('No pending payments.','circle-check')}</div><div class="panel"><h3>Events by type</h3>${ty.length?bars(ty):empty('Add events to see this chart.','chart-simple')}</div></div>
-  ${heading('Upcoming events',up.length>6?`<button class="btn sm outline" data-go="events">View all</button>`:'')}${cards(up.slice(0,6),e=>evCard(e,1),'No upcoming events.','calendar-days')}`;
+  <div class="stats">${stat('Clients',db.clients.length,1,'users','a:clients')}${stat('Projects',db.projects.length,0,'camera-retro','a:projects')}${stat('Events this month',db.events.filter(e=>(e.date||'').startsWith(ym)).length,0,'calendar-check','a:evmonth')}${stat('Upcoming events',up.length,0,'calendar-days','a:evup')}${stat('Total billed',inr(t.total),0,'file-invoice','a:billed')}${stat('Received',inr(t.paid),0,'circle-check','a:recv')}${stat('Payment pending',inr(t.due),1,'hourglass-half','a:pend')}${stat('Collection rate',(t.total?Math.round(t.paid/t.total*100):0)+'%',0,'chart-line','a:rate')}</div>
+  <div class="grid2"><div class="panel"><h3>Events per month</h3>${bars(ms.map(m=>[mLabel(m),db.events.filter(e=>(e.date||'').startsWith(m)).length,m]),'month')}</div><div class="panel"><h3>Events by status</h3>${bars(EST.map(s=>[s,db.events.filter(e=>e.status===s).length]),'status')}</div></div>
+  <div class="grid2"><div class="panel"><h3>Top pending payments</h3>${dl.length?`<table class="mini">${dl.map(r=>`<tr><td><a href="#" data-co="${r[0]}">${esc(cname(r[0]))}</a></td><td class="r">${pill(inr(r[1]),'warn')}</td></tr>`).join('')}</table>`:empty('No pending payments.','circle-check')}</div><div class="panel"><h3>Events by type</h3>${ty.length?bars(ty,'type'):empty('Add events to see this chart.','chart-simple')}</div></div>
+  ${heading('Upcoming events',up.length>6?`<button class="btn sm outline" data-go="events">View all</button>`:'')}${cards(up.slice(0,6),e=>evCard(e,1),'No upcoming events.','calendar-days')}${actPanel(6)}`;
 }
 
 const sel=(id,label,opts,val)=>`<label class="f"><small>${label}</small><select id="${id}">${opts.map(o=>`<option value="${esc(o[0])}" ${o[0]===val?'selected':''}>${esc(o[1])}</option>`).join('')}</select></label>`;
@@ -514,7 +660,7 @@ function projects(){
   fillProj();
 }
 
-/* ---- events (with filters, grouped by date) ---- */
+/* ---- events (with filters, grouped by date; completed events at the bottom) ---- */
 const EF0={q:'',when:'',month:'',date:'',status:'',type:'',client:'',project:'',sort:'asc'};let ef={...EF0};
 function evFiltered(){
   const td=todayS(),wk=new Date();wk.setDate(wk.getDate()+7);const w=wk.toLocaleDateString('en-CA'),s=ef.q.toLowerCase();
@@ -534,8 +680,8 @@ function evFiltered(){
     return true}).sort((a,b)=>ef.sort==='desc'?evSort(b,a):evSort(a,b))}
 function fillEv(){
   const l=evFiltered();
-  $('#evcount').textContent=`${l.length} of ${db.events.length} event${db.events.length===1?'':'s'}`;
-  $('#evlist').innerHTML=l.length?evGroups(l,1):empty(db.events.length?'No event matches these filters.':'No events yet.','calendar-days');
+  $('#evcount').textContent=`${l.length} of ${db.events.length} event${db.events.length===1?'':'s'} · ${l.filter(isDone).length} completed`;
+  $('#evlist').innerHTML=l.length?evSplit(l,1):empty(db.events.length?'No event matches these filters.':'No events yet.','calendar-days');
   wire();
 }
 function events(){
@@ -572,8 +718,8 @@ function clientPage(){
   <div class="row-actions mt"><button class="btn sm outline" data-cp="${esc(c.phone)}">${ico('copy','regular')} Copy number</button><button class="btn sm outline" data-cp="${esc(db.secrets[c.id]||'')}">${ico('copy','regular')} Copy password</button></div></div>
   ${heading('Delivery links',`<button class="btn sm btn-gold" id="adl">${ico('plus')} Add delivery card</button>`)}${ds.length?`<div class="dgrid">${ds.map(x=>delivCard(x,1)).join('')}</div>`:empty('No delivery cards yet. Add Pre-wedding, Wedding, Haldi, Mehendi etc. with a link and a preview photo.','photo-film')}
   ${heading('Projects',`<button class="btn sm btn-gold" id="ap">${ico('plus')} Add project</button>`)}${cards(ps,p=>projCard(p,1),'This client has no projects yet.','camera-retro')}
-  ${heading('Events',`<button class="btn sm btn-gold" id="ae">${ico('plus')} Add event</button>`)}${cards(es,e=>evCard(e,1),'No events yet.','calendar-days')}
-  <div class="panel mt"><h3>Payment history</h3>${payLog(ps)}</div>`;
+  ${heading('Events',`<button class="btn sm btn-gold" id="ae">${ico('plus')} Add event</button>`)}${es.length?evSplit(es,1):empty('No events yet.','calendar-days')}
+  <div class="panel mt"><h3>Payment history</h3>${payLog(ps,1)}</div><div class="panel mt"><h3>Client activity</h3>${actList(40,a=>a.clientId===c.id)}</div>`;
   $('#ap').onclick=()=>addProject({ownerIds:[c.id]});$('#adl').onclick=()=>addDeliv(c.id);$('#ae').onclick=()=>addEvent({projectId:ps[0]?.id||''});
   const rv=$('#rv');if(rv)rv.onclick=()=>updateDoc(doc(fs,'clients',c.id),{verified:false}).then(()=>toast('The client will need to verify again')).catch(x=>toast(nice(x)));
 }
@@ -590,24 +736,45 @@ function staffList(){
 function staffPage(){
   const s=db.staff.find(x=>x.id===sid);if(!s){view='staff';return render()}
   const ids=s.projectIds||[],ps=db.projects.filter(p=>ids.includes(p.id)),es=db.events.filter(e=>ids.includes(e.projectId)).sort(evSort),rq=db.reqs.filter(r=>r.staffId===s.id).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  const sp=db.staffPay.filter(x=>x.staffId===s.id).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   $('#main').innerHTML=`<button class="btn sm outline back" data-go="staff">${ico('arrow-left')} All staff</button><div class="top"><div class="who-box">${av(s.name,s.photo,'lg')}<div><h1>${esc(s.name)}</h1><p>${pill(s.role||'Staff')} ${s.active===false?pill('Paused','bad'):s.access==='full'?pill('Full access','dark'):pill('Limited','ok')}</p></div></div>${me.full?'':`<div class="row-actions">${btn('sw',s.id,'Send login on WhatsApp','whatsapp').replace('fa-solid fa-whatsapp','fa-brands fa-whatsapp')}${btn('se',s.id,'Edit / access','pen')}${btn('sd',s.id,'Delete','trash')}</div>`}</div>
   <div class="panel"><h3>Staff details</h3><div class="kvs">${kv('Login number',s.phone)}${kv('Password',db.ssecrets[s.id])}${kv('Alternate / WhatsApp',s.altPhone)}${kv('Role',s.role)}${kv('Access',s.access==='full'?'Full access':'Limited')}${me.full?'':kv('Private note',db.notes[s.id])}</div>
   <div class="row-actions mt"><button class="btn sm outline" data-cp="${esc(s.phone)}">${ico('copy','regular')} Copy number</button>${me.full?'':`<button class="btn sm outline" data-cp="${esc(db.ssecrets[s.id]||'')}">${ico('copy','regular')} Copy password</button>`}</div></div>
   ${heading('Projects this person can see')}<div class="panel">${ps.length?`<table class="mini">${ps.map(p=>`<tr><td><b>${esc(p.title)}</b></td><td class="r">${esc(ownerNames(p))}</td></tr>`).join('')}</table>`:empty('No projects assigned. Use “Edit / access” to choose projects.','camera-retro')}</div>
+  ${heading('Payment dashboard',`<div class="row-actions"><button class="btn sm btn-gold" id="asa">${ico('plus')} Add payment / expense</button><button class="btn sm outline" id="asp">${ico('file-invoice')} Add project amount</button></div>`)}${spStats(spTotals(sp),s.id)}${ledger(sp,1)}${heading('Project-wise payments')}${cards(sp,d=>spCard(d,1),'No project payments yet. Use “Add project payment”, choose a project and the agreed amount; then add payments and expenses (team, editing, travelling, other).','wallet')}
   ${heading('Events they can see')}${cards(es,e=>evCard(e,1),'No events in the assigned projects yet.','calendar-days')}
-  ${heading('Messages from '+esc(s.name))}${rq.length?`<div class="cards">${rq.map(r=>reqCard(r,1)).join('')}</div>`:empty('No messages yet.','message')}`;
+  ${heading('Messages from '+esc(s.name))}${rq.length?`<div class="cards">${rq.map(r=>reqCard(r,1)).join('')}</div>`:empty('No messages yet.','message')}
+  ${heading('Activity of '+esc(s.name))}<div class="panel">${actList(40,a=>a.staffId===s.id||a.by===s.id)}</div>`;
+  const asp=$('#asp');if(asp)asp.onclick=()=>assignSp(s.id);const asa=$('#asa');if(asa)asa.onclick=()=>addSpAny(s.id);
+}
+
+/* ---- staff payments overview (admin): every staff, every project ---- */
+function staffPayView(){
+  const rows=[...db.staff].sort((a,b)=>(a.name||'').localeCompare(b.name||'')).map(s=>{const l=db.staffPay.filter(x=>x.staffId===s.id);return{s,n:l.length,...spTotals(l)}});
+  const g=spTotals(db.staffPay),pr={};
+  db.staffPay.forEach(d=>{const k=d.projectId,x=spSum(d),r=pr[k]||(pr[k]={t:d.projectTitle||pname(k),total:0,paid:0,due:0,spent:0,n:0,id:k,c:{team:0,editing:0,travel:0,photography:0,other:0}});r.total+=x.total;r.paid+=x.paid;r.due+=x.due;r.spent+=x.spent;r.n++;x.cats.forEach(c=>r.c[c[0]]+=c[2])});
+  const pl=Object.values(pr).sort((a,b)=>b.spent-a.spent);
+  $('#main').innerHTML=`<div class="top"><div><p class="eyebrow">Team accounts</p><h1>Staff payments</h1></div></div>${spStats(g)}
+  ${heading('Staff-wise')}<div class="panel flush">${rows.length?`<div class="table-wrap"><table><thead><tr><th>Staff</th><th>Projects</th><th>Agreed</th><th>Paid</th><th>Pending</th><th>Expenses</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr><td><a href="#" data-so="${r.s.id}"><b>${esc(r.s.name)}</b></a><br><small>${esc(r.s.role||'Staff')}</small></td><td>${r.n}</td><td>${inr(r.total)}</td><td>${inr(r.paid)}</td><td>${r.due?pill(inr(r.due),'warn'):pill('Clear','ok')}</td><td>${inr(r.spent)}</td><td><div class="row-actions">${btn('so',r.s.id,'Open payments','wallet')}</div></td></tr>`).join('')}</tbody></table></div>`:empty('No staff yet. Add staff first, then add project payments inside each staff page.','user-tie')}</div>
+  ${heading('Project-wise cost')}<div class="panel flush">${pl.length?`<div class="table-wrap"><table><thead><tr><th>Project</th><th>Staff</th><th>Agreed</th><th>Paid</th><th>Pending</th><th>Team</th><th>Editing</th><th>Travel</th><th>Photography</th><th>Other</th></tr></thead><tbody>${pl.map(r=>`<tr><td>${r.id?`<a href="#" data-pcm="${r.id}"><b>${esc(r.t)}</b></a>`:`<b>${esc(r.t)}</b>`}</td><td>${r.n}</td><td>${inr(r.total)}</td><td>${inr(r.paid)}</td><td>${inr(r.due)}</td><td>${inr(r.c.team)}</td><td>${inr(r.c.editing)}</td><td>${inr(r.c.travel)}</td><td>${inr(r.c.photography)}</td><td>${inr(r.c.other)}</td></tr>`).join('')}</tbody></table></div>`:empty('No project payments yet.','wallet')}</div>`;
+}
+function activityView(){
+  $('#main').innerHTML=`<div class="top"><div><p class="eyebrow">Record</p><h1>Activity log</h1></div></div><p class="fcount">Every change by admin, full-access staff and staff — with who did it and when. Records cannot be edited.</p><div class="panel">${actList(400)}</div>`;
 }
 
 /* ---------- staff portal: assigned events only, no prices, no client contact ---------- */
+function staffPayHtml(){const l=[...db.staffPay].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  return`<div class="top"><div><p class="eyebrow">Accounts</p><h1>My payments</h1></div></div>${spStats(spTotals(l),'',false)}<p class="fcount">Tap any number or row to open its details. You can add your own expenses; every entry shows who added it and when.</p>${ledger(l,0)}${cards(l,d=>spCard(d,0),'No project payment has been added for you yet.','wallet')}`}
 function staffView(){
   const s=db.self;if(!s){$('#app').innerHTML='<div class="portal-loading"><span class="spinner"></span></div>';return}
   shell();
-  const es=[...db.events].sort(evSort),td=todayS(),up=es.filter(e=>e.date>=td&&e.status!=='Cancelled'),ym=td.slice(0,7);
+  const es=[...db.events].sort(evSort),td=todayS(),up=es.filter(e=>e.date>=td&&e.status!=='Cancelled'&&!isDone(e)),ym=td.slice(0,7);
   const reqs=[...db.reqs].sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  const stats=`<div class="stats s4">${stat('Assigned events',es.length,1,'calendar-days')}${stat('Upcoming',up.length,0,'calendar-check')}${stat('This month',es.filter(e=>(e.date||'').startsWith(ym)).length,0,'calendar-week')}${stat('Role',esc(s.role||'Staff'),0,'user-tie')}</div>`;
+  const stats=`<div class="stats s4">${stat('Assigned events',es.length,1,'calendar-days','s:ev')}${stat('Upcoming',up.length,0,'calendar-check','s:ev')}${stat('This month',es.filter(e=>(e.date||'').startsWith(ym)).length,0,'calendar-week','s:ev')}${stat('Role',esc(s.role||'Staff'),0,'user-tie')}</div>`;
   const body={
     home:()=>`<div class="top"><div><p class="eyebrow">${esc(s.role||'Staff')}</p><h1>Hello, ${esc(s.name)}</h1></div></div>${stats}${up[0]?`<div class="panel next"><h3>Your next event</h3>${evCard(up[0],2)}</div>`:''}${heading('Upcoming events',up.length>6?`<button class="btn sm outline" data-go="events">View all</button>`:'')}${cards(up.slice(0,6),e=>evCard(e,2),'No upcoming events assigned to you yet.','calendar-days')}`,
-    events:()=>`<div class="top"><div><p class="eyebrow">Schedule</p><h1>All my events</h1></div></div>${es.length?evGroups(es,2):empty('No events assigned to you yet.','calendar-days')}`,
+    events:()=>`<div class="top"><div><p class="eyebrow">Schedule</p><h1>All my events</h1></div></div>${es.length?evSplit(es,2):empty('No events assigned to you yet.','calendar-days')}`,
+    pay:()=>staffPayHtml(),
     contact:()=>`<div class="top"><div><p class="eyebrow">Studio</p><h1>Message / request</h1></div></div><div class="panel"><h3>Write to the studio</h3><p class="hint" style="margin-top:0">Tell the studio something, or ask for access to a project.</p><textarea id="rt" rows="5" maxlength="1000" placeholder="Type your message here...">${esc(draft)}</textarea><div class="row-actions mt"><button class="btn btn-gold sm" id="rs">${ico('paper-plane')} Send to admin</button></div></div>${heading('Your messages')}${reqs.length?`<div class="cards">${reqs.map(r=>reqCard(r,0)).join('')}</div>`:empty('You have not sent any message yet.','message')}`
   };
   $('#main').innerHTML=(body[view]||body.home)();wire();
@@ -633,16 +800,16 @@ function clientView(){
   const c=db.self;if(!c){$('#app').innerHTML='<div class="portal-loading"><span class="spinner"></span></div>';return}
   if(!c.verified)return verifyView();
   shell();
-  const ps=db.projects,es=[...db.events].sort(evSort),t=tot(ps),td=todayS(),next=es.find(e=>e.date>=td&&e.status!=='Cancelled');
+  const ps=db.projects,es=[...db.events].sort(evSort),t=tot(ps),upc=es.filter(e=>!isDone(e)&&e.status!=='Cancelled');
   const delivery=c.link?`<div class="delivery">${ico('photo-film')}<div><h3>Your photos &amp; videos are ready</h3><p>Open your private delivery link to view and download everything.</p></div><a class="btn btn-gold" href="${esc(c.link)}" target="_blank" rel="noopener">Open delivery link</a></div>`:`<div class="delivery soon">${ico('hourglass-half')}<div><h3>Delivery link not ready yet</h3><p>It will appear here as soon as your photos and films are delivered.</p></div></div>`;
   const ds=[...db.deliveries].sort(delivSort),dview=ds.length?`<div class="sec-h"><h3>Your photos &amp; videos</h3></div><div class="dgrid">${ds.map(x=>delivCard(x,0)).join('')}</div>`:delivery;
   const stats=`<div class="stats s4">${stat('Projects',ps.length,1,'camera-retro')}${stat('Total',inr(t.total),0,'file-invoice')}${stat('Paid',inr(t.paid),0,'circle-check')}${stat('Pending',inr(t.due),1,'hourglass-half')}</div>`;
   const body={
     home:()=>`<div class="top"><div><p class="eyebrow">Client portal</p><h1>Hello, ${esc(c.name)}</h1></div></div>${stats}
-      ${next?`<div class="panel next"><h3>Your next event</h3>${evCard(next,0)}</div>`:''}${dview}${reviewCard()}
+      ${upc.length?heading('Upcoming events',upc.length>3?`<button class="btn sm outline" data-go="events">View all</button>`:'')+cards(upc.slice(0,3),e=>evCard(e,0)):''}${dview}${reviewCard()}
       ${heading('Your projects',ps.length>2?`<button class="btn sm outline" data-go="projects">View all</button>`:'')}${cards(ps.slice(0,2),p=>projCard(p,0),'Your project has not been added yet.','camera-retro')}${studioCard()}`,
     projects:()=>`<div class="top"><div><p class="eyebrow">Overview</p><h1>My projects</h1></div></div>${cards(ps,p=>projCard(p,0),'Your project has not been added yet.','camera-retro')}`,
-    events:()=>`<div class="top"><div><p class="eyebrow">Schedule</p><h1>My events</h1></div></div>${cards(es,e=>evCard(e,0),'No events scheduled yet.','calendar-days')}`,
+    events:()=>`<div class="top"><div><p class="eyebrow">Schedule</p><h1>My events</h1></div></div>${es.length?evSplit(es,0):empty('No events scheduled yet.','calendar-days')}`,
     payments:()=>`<div class="top"><div><p class="eyebrow">Billing</p><h1>Payments</h1></div></div>${stats}<div class="panel mt"><h3>Payment history</h3>${payLog(ps)}</div>`,
     delivery:()=>`<div class="top"><div><p class="eyebrow">Delivery</p><h1>Photos &amp; videos</h1></div></div>${dview}${reviewCard()}<div class="panel mt"><h3>Your account</h3><div class="kvs">${kv('Name',c.name)}${kv('Mobile',c.phone)}${kv('Email',c.email)}${kv('Verified Google account',c.googleEmail)}</div></div>${studioCard()}`
   };
@@ -654,7 +821,7 @@ function render(){
   if(!me)authView();else if(me.role==='admin')adminView();else if(me.role==='staff')staffView();else clientView();
   const yr=$('#year');if(yr)yr.textContent=new Date().getFullYear();
   if(y&&me)window.scrollTo({top:y,behavior:'instant'});
-  const mm=$('#modal');if(me&&mm&&!mm.hidden&&mm.dataset.term)termsModal(mm.dataset.term,true);   // keep an open payment tracker live
+  const mm=$('#modal');if(me&&mm&&!mm.hidden&&mm.dataset.term)termsModal(mm.dataset.term,true);else if(me&&mm&&!mm.hidden&&mm.dataset.sp)spModal(mm.dataset.sp,true);else if(me&&mm&&!mm.hidden&&mm.dataset.pj)projModal(mm.dataset.pj,true);   // keep an open payment tracker live
 }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&navOpen)setNav(false)});
 if(!ready)render();

@@ -25,7 +25,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if request.auth != null && !exists(/databases/$(db)/documents/config/setup);
     }
-    // NEW: studio profile (name, number, photo) - clients/staff read, only admin writes
+    // studio profile (name, number, photo) - clients/staff read, only admin writes
     match /config/studio {
       allow read: if request.auth != null;
       allow write: if isOwner();
@@ -61,7 +61,7 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // NEW: staff accounts (admin manages; staff can only read their own profile)
+    // staff accounts (admin manages; staff can only read their own profile)
     // Only the owner can add / edit / delete staff or give Full access
     match /staff/{id} {
       allow read: if isAdmin() || (request.auth != null && request.auth.uid == id);
@@ -69,7 +69,7 @@ service cloud.firestore {
     }
     match /staffSecrets/{id} { allow read, write: if isOwner(); }
 
-    // NEW: staff messages / access requests
+    // staff messages / access requests
     match /staffRequests/{id} {
       allow read: if isAdmin() || (staffOn() && resource.data.staffId == request.auth.uid);
       allow create: if staffOn()
@@ -78,6 +78,30 @@ service cloud.firestore {
         && request.resource.data.text.size() > 0
         && request.resource.data.text.size() <= 1000;
       allow update, delete: if isAdmin();
+    }
+
+    // NEW: project-wise staff payments  (doc id = staffId_projectId)
+    // Admin / full-access: everything. A staff member can read ONLY their own records
+    // and can only change the "entries" list (add expenses) - never the agreed amount or owner.
+    match /staffPay/{id} {
+      allow read: if isAdmin() || (staffOn() && resource.data.staffId == request.auth.uid);
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin()
+        || (staffOn()
+            && resource.data.staffId == request.auth.uid
+            && request.resource.data.staffId == request.auth.uid
+            && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['entries']));
+    }
+
+    // NEW: agreed amounts per staff + project. ADMIN ONLY - staff and clients can never read these.
+    match /staffPayAmt/{id} { allow read, write: if isAdmin(); }
+
+    // NEW: activity log - who did what and when. Only admins read it.
+    // Admin and staff can add records (as themselves); nobody can edit or delete them.
+    match /activity/{id} {
+      allow read: if isAdmin();
+      allow create: if isAdmin() || (staffOn() && request.resource.data.by == request.auth.uid);
+      allow update, delete: if false;
     }
   }
 }
